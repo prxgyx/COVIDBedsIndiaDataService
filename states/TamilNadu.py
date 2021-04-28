@@ -8,6 +8,8 @@ class TamilNadu():
 
 	def __init__(self):
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/608970d903eef3cbe0d05a6b"
+		self.source_url = "https://stopcorona.tn.gov.in/beds.php"
+		self.custom_sheet_name = "Sheet12"
 
 	def get_dummy_data(self):
 		dummy_data = [
@@ -39,13 +41,12 @@ class TamilNadu():
 
 	def get_data_from_source(self):
 		http = urllib3.PoolManager()
-		url = "https://stopcorona.tn.gov.in/beds.php"
-
+		
 		output_json = []
 
 		s_no = 0
 
-		response = http.request('GET', url)
+		response = http.request('GET', self.source_url)
 		soup = BeautifulSoup(response.data, "html.parser")
 		json_obj = 0
 		for tr in soup.find_all('tr')[2:]:
@@ -108,7 +109,9 @@ class TamilNadu():
 			lat = hsp_result["LAT"]
 			lng = hsp_result["LONG"]
 		else:
-			print("No location fetched for {}, {}".format(hsp_name, hsp_district))
+			if not hsp_results:
+				print("No location fetched for {}, {}".format(hsp_name, hsp_district))
+			print("location is not there for {}, {}".format(hsp_name, hsp_district))
 			loc = ""
 			lat = ""
 			lng = ""
@@ -117,11 +120,17 @@ class TamilNadu():
 		hsp_info["LAT"] = lat
 		hsp_info["LONG"] = lng
 
+		self.tag_critical_care(hsp_info)
+
 		return hsp_info
+
+	def tag_critical_care(self, hsp_info):
+		hsp_info["HAS_ICU_BEDS"] = int(hsp_info["ICU_BEDS_TOTAL"]) > 0
+		hsp_info["HAS_VENTILATORS"] = int(hsp_info["VENTILATOR_TOTAL"]) > 0
 
 	def push_data(self):
 
-		url = self.stein_url + "/Sheet9"
+		url = self.stein_url + "/" + self.custom_sheet_name
 		n = 50
 
 		print("Fetching data from source")
