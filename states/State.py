@@ -1,6 +1,7 @@
 import urllib
 import json
 import requests
+import pandas as pd
 
 class State(object):
 
@@ -10,52 +11,29 @@ class State(object):
 	# 	else:
 	# 		raise Exception("State {} not supported".format(state_name))
 
-	def get_location_from_master(self, hsp_info):
+	def get_location_from_master(self, data):
 		url = self.stein_url + "/" + self.main_sheet_name
 
-		hsp_name = hsp_info["HOSPITAL_NAME"].strip()
-		hsp_district = hsp_info["DISTRICT"]
+		response = requests.get(url).json()
+		data_with_loc_df = pd.DataFrame(response)
+		data_df = pd.DataFrame(data)
+		print(data_df)
 
-		query = {
-			"DISTRICT": hsp_district,
-			"HOSPITAL_NAME": hsp_name
-		}
+		data_with_loc_df.HOSPITAL_NAME = data_with_loc_df.HOSPITAL_NAME.str.strip()
+		data_with_loc_df.DISTRICT = data_with_loc_df.DISTRICT.str.strip()
+		data_df.HOSPITAL_NAME = data_df.HOSPITAL_NAME.str.strip()
+		data_df.DISTRICT = data_df.DISTRICT.str.strip()
+		data_with_loc_df_subset = data_with_loc_df[["HOSPITAL_NAME", "DISTRICT", "LOCATION", "LAT", "LONG"]]
+		data_with_loc_df_subset["IS_NEW_HOSPITAL"] = False
+		merged_loc_df = pd.merge(data_df, data_with_loc_df_subset, 
+									on=["HOSPITAL_NAME", "DISTRICT"], how="left")
+		merged_loc_df["IS_NEW_HOSPITAL"] = merged_loc_df.apply(lambda row: True
+												 if isinstance(row["IS_NEW_HOSPITAL"], float) else row["IS_NEW_HOSPITAL"], axis=1)
 
-		encode_query = urllib.parse.quote_plus(json.dumps(query))
+		merged_loc_df = self.tag_critical_care(merged_loc_df)
+		merged_loc_df = merged_loc_df.fillna('')
+		return merged_loc_df.to_dict('records')
 
-		query_url = url + "?search={}".format(encode_query)
-		
-		hsp_results = requests.get(query_url).json()
-
-		if (len(hsp_results) > 1):
-			print("More than 1 row fetched for {}, {}".format(hsp_name, hsp_district))
-
-		if "error" in hsp_results:
-			print(hsp_name, hsp_district)
-			print(hsp_results)
-
-		if hsp_results and "LOCATION" in hsp_results[0]:
-			# print(hsp_results)
-			hsp_result = hsp_results[0]
-			loc = hsp_result["LOCATION"]
-			lat = hsp_result["LAT"]
-			lng = hsp_result["LONG"]
-		else:
-			if not hsp_results:
-				print("No location fetched for {}, {}".format(hsp_name, hsp_district))
-			else:
-				print("location is empty for {}, {}".format(hsp_name, hsp_district))
-			loc = ""
-			lat = ""
-			lng = ""
-
-		hsp_info["LOCATION"] = loc
-		hsp_info["LAT"] = lat
-		hsp_info["LONG"] = lng
-
-		self.tag_critical_care(hsp_info)
-
-		return hsp_info
 
 	def push_data(self):
 
@@ -64,19 +42,20 @@ class State(object):
 
 		print("Fetching data from source")
 		data = self.get_data_from_source()
+		
 		# data = self.get_dummy_data()
 
-		location_tagged_data = [self.get_location_from_master(i) for i in data]
+		location_tagged_data = self.get_location_from_master(data)
 
 		print("Fetching location from master sheet")
 		nested_data = [location_tagged_data[i * n:(i + 1) * n] for i in range((len(location_tagged_data) + n - 1) // n )]
 
 		print("Posting data to Google Sheets")
-		
 		for each_data_point in nested_data:
 			print("Pushing 50 data points")
 			x = requests.post(url, json = each_data_point)
 			print(x.text)
+
 
 	def get_non_empty_dict_value(self, key, dict_obj):
 		if key in dict_obj:
