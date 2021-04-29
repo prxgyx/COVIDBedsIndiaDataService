@@ -2,6 +2,7 @@ import urllib
 import json
 import requests
 import pandas as pd
+import logging
 
 class State(object):
 
@@ -34,7 +35,6 @@ class State(object):
 		merged_loc_df = merged_loc_df.fillna('')
 		return merged_loc_df.to_dict('records')
 
-
 	def push_data(self):
 
 		url = self.stein_url + "/" + self.custom_sheet_name
@@ -44,10 +44,9 @@ class State(object):
 		data = self.get_data_from_source()
 		
 		# data = self.get_dummy_data()
-
+		print("Fetching location from master sheet")
 		location_tagged_data = self.get_location_from_master(data)
 
-		print("Fetching location from master sheet")
 		nested_data = [location_tagged_data[i * n:(i + 1) * n] for i in range((len(location_tagged_data) + n - 1) // n )]
 
 		print("Posting data to Google Sheets")

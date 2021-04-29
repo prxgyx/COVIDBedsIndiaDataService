@@ -9,7 +9,7 @@ class Pune(State):
 	def __init__(self):
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/6089822703eef30c1cd05a6e"
 		self.source_url = "https://covidpune.com/data/covidpune.com/bed_data.json?_=7528f9d_20210426225550"
-		self.custom_sheet_name = "Sheet3"
+		self.custom_sheet_name = "Sheet4"
 		self.main_sheet_name = "Pune"
 
 	def get_dummy_data(self):
