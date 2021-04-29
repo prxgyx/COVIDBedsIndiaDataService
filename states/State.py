@@ -9,6 +9,10 @@ logging.basicConfig(filename='DataService.log', filemode='a', format='%(asctime)
 
 class State(object):
 
+	def __init__(self):
+		self.unique_columns = ["DISTRICT", "HOSPITAL_NAME"]
+		self.old_info_columns = ["LOCATION", "LAT", "LONG"]
+
 	# def __new__(cls, state_name):
 	# 	if(state_name == "TamilNadu"):
 	# 		return super().__new__(TamilNadu)
@@ -22,13 +26,13 @@ class State(object):
 		data_with_loc_df = pd.DataFrame(response)
 		data_df = pd.DataFrame(data)
 
-		data_with_loc_df.HOSPITAL_NAME = data_with_loc_df.HOSPITAL_NAME.str.strip()
-		data_with_loc_df.DISTRICT = data_with_loc_df.DISTRICT.str.strip()
-		data_df.HOSPITAL_NAME = data_df.HOSPITAL_NAME.str.strip()
-		data_df.DISTRICT = data_df.DISTRICT.str.strip()
-		data_with_loc_df_subset = data_with_loc_df[["HOSPITAL_NAME", "DISTRICT", "LOCATION", "LAT", "LONG", "UID", "IS_NEW_HOSPITAL"]]
+		for unique_column in self.unique_columns:
+			data_with_loc_df[unique_column] = data_with_loc_df[unique_column].str.strip()
+			data_df[unique_column] = data_df[unique_column].str.strip()
+
+		data_with_loc_df_subset = data_with_loc_df[self.unique_columns + self.old_info_columns + ["UID", "IS_NEW_HOSPITAL"]]
 		merged_loc_df = pd.merge(data_df, data_with_loc_df_subset, 
-									on=["HOSPITAL_NAME", "DISTRICT"], how="left")
+									on=self.unique_columns, how="left")
 		merged_loc_df["IS_NEW_HOSPITAL"] = merged_loc_df.apply(lambda row: True
 												 if isinstance(row["IS_NEW_HOSPITAL"], float) else row["IS_NEW_HOSPITAL"], axis=1)
 
