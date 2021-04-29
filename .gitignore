@@ -3,3 +3,4 @@ geckodriver.log
 *.pkl
 *.csv
 *.pyc
+DataService.log

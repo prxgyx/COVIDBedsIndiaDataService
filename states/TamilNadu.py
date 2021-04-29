@@ -2,14 +2,16 @@ import urllib3
 from bs4 import BeautifulSoup
 import requests
 from states.State import State
+import logging
 
 class TamilNadu(State):
 
 	def __init__(self):
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/608970d903eef3cbe0d05a6b"
 		self.source_url = "https://stopcorona.tn.gov.in/beds.php"
-		self.custom_sheet_name = "Sheet14"
+		self.custom_sheet_name = "Sheet17"
 		self.main_sheet_name = "Tamil Nadu"
+		self.state_name = "Tamil Nadu"
 
 	def get_dummy_data(self):
 		dummy_data = [
@@ -78,6 +80,8 @@ class TamilNadu(State):
 			output_json.append(json_obj)
 		return output_json
 
-	def tag_critical_care(self, hsp_info):
-		hsp_info["HAS_ICU_BEDS"] = int(hsp_info["ICU_BEDS_TOTAL"]) > 0
-		hsp_info["HAS_VENTILATORS"] = int(hsp_info["VENTILATOR_TOTAL"]) > 0
+	def tag_critical_care(self, merged_loc_df):
+		logging.info("Tagged critical care")
+		merged_loc_df["HAS_ICU_BEDS"] = merged_loc_df.apply(lambda row: int(row["ICU_BEDS_TOTAL"]) > 0, axis=1)
+		merged_loc_df["HAS_VENTILATORS"] = merged_loc_df.apply(lambda row: int(row["VENTILATOR_TOTAL"]) > 0, axis=1)
+		return merged_loc_df

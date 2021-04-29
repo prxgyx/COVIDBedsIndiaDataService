@@ -2,14 +2,10 @@ from states.TamilNadu import TamilNadu
 from states.Pune import Pune
 from states.Telangana import Telangana
 from states.Haryana import Haryana
+from sheetsapi.GoogleSheetsAPI import *
 
-# tn = TamilNadu()
-# tn.push_data()
+TamilNadu().push_data()
 
-# pune = Pune()
-# pune.push_data()
-
-# telangana = Telangana()
-# telangana.get_data_from_source()
+Pune().push_data()
 
 Haryana().push_data()

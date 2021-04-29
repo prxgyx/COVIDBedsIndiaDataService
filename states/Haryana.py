@@ -6,13 +6,14 @@ import time
 from urllib.request import urlopen
 import pandas as pd
 import json
+import logging
 
 class Haryana(State):
 
 	def __init__(self):
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/6089834e03eef33448d05a74"
 		self.distL={"Ambala":1,"Bhiwani":2,"Chandigarh":24,"Charki Dadri":3,"Faridabad":4,"Fatehabad":5,"Gurugram":6,"Hisar":7,"Jhajjar":8,"Jind":9,"Kaithal":10,"Karnal":11,"Kurukshetra":12,"Mahendragarh":13,"Nuh":23,"Palwal":15,"Panchkula":16,"Panipat":17,"Rewari":18,"Rohtak":19,"Sirsa":20,"Sonipat":21,"Yamunanagar":22}
-		self.custom_sheet_name = "Sheet3"
+		self.custom_sheet_name = "Sheet4"
 		self.main_sheet_name = "Haryana"
 
 	def get_data_from_source(self):
@@ -20,7 +21,7 @@ class Haryana(State):
 		
 		for city in range(1,25):
 			try:
-				print (city)
+				logging.info(city)
 				url='https://coronaharyana.in/?city='+str(city)
 				response = requests.get(url)
 				soup = BeautifulSoup(response.text, 'html.parser')
@@ -50,7 +51,7 @@ class Haryana(State):
 				deets['LAST_UPDATED']=lastup
 				deets['CITY']= self.get_key(city)
 			except Exception as e:
-				print(city , "city not found")
+				logging.info(city , "city not found")
 
 			finaldata=pd.concat([finaldata,deets],axis=0)
 
@@ -81,15 +82,15 @@ class Haryana(State):
 		url = self.stein_url + "/" + self.custom_sheet_name
 		n = 50
 
-		print("Fetching data from source")
+		logging.info("Fetching data from source")
 		data = self.get_data_from_source()
 		# data = self.get_dummy_data()
 
 		nested_data = [data[i * n:(i + 1) * n] for i in range((len(data) + n - 1) // n )]
 
-		print("Posting data to Google Sheets")
+		logging.info("Posting data to Google Sheets")
 		
 		for each_data_point in nested_data:
-			print("Pushing 50 data points")
+			logging.info("Pushing 50 data points")
 			x = requests.post(url, json = each_data_point)
-			print(x.text)
+			logging.info(x.text)
