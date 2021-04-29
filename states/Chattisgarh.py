@@ -9,10 +9,14 @@ from states.State import State
 class Chattisgarh(State):
 
 	def __init__(self):
+		self.state_name = "Chattisgarh"
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/6089833203eef38338d05a73"
 		self.source_url = "https://cg.nic.in/health/covid19/RTPBedAvailable.aspx"
 		self.custom_sheet_name = "Sheet10"
 		self.main_sheet_name = "Chattisgarh"
+		self.unique_columns = ["HOSPITAL_NAME", "DISTRICT"]
+		self.old_info_columns = ["LOCATION", "LAT", "LONG"]
+
 
 	def get_dummy_data(self):
 		dummy_data = [
