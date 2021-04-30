@@ -11,10 +11,18 @@ import logging
 class Haryana(State):
 
 	def __init__(self):
-		
+		super().__init__()
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/6089834e03eef33448d05a74"
 		self.distL={"Ambala":1,"Bhiwani":2,"Chandigarh":24,"Charki Dadri":3,"Faridabad":4,"Fatehabad":5,"Gurugram":6,"Hisar":7,"Jhajjar":8,"Jind":9,"Kaithal":10,"Karnal":11,"Kurukshetra":12,"Mahendragarh":13,"Nuh":23,"Palwal":15,"Panchkula":16,"Panipat":17,"Rewari":18,"Rohtak":19,"Sirsa":20,"Sonipat":21,"Yamunanagar":22}
-		self.main_sheet_name = "Haryana"
+		self.main_sheet_name = "Copy of Haryana"
+		self.state_name = "Haryana"
+		self.sheet_url = self.stein_url + "/" + self.main_sheet_name
+		# Fetching it here because need number of records in the Class
+		# need number of records because bulk delete API throws error entity too large
+		logging.info("Fetching data from Google Sheets")
+		self.sheet_response = requests.get(self.sheet_url).json()
+		self.number_of_records = len(self.sheet_response)
+		logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
 
 	def get_data_from_source(self):
 		finaldata=pd.DataFrame()
@@ -63,6 +71,8 @@ class Haryana(State):
 		locationsplit['LONG'] = locationsplit['col2'].replace("\'", "", regex=True)
 
 		finaldata=pd.concat([finaldata[['HOSPITAL_INFO','LAST_UPDATED','CITY']],locationsplit[['LAT','LONG']]],axis=1)
+
+		finaldata["STEIN_ID"] = self.state_name
 		
 		output_json = json.loads(finaldata.to_json(orient="records"))
 
@@ -88,8 +98,10 @@ class Haryana(State):
 
 		nested_data = [data[i * n:(i + 1) * n] for i in range((len(data) + n - 1) // n )]
 
+		self.write_temp_file()
+		self.delete_data()
+
 		logging.info("Posting data to Google Sheets")
-		
 		for each_data_point in nested_data:
 			logging.info("Pushing 50 data points")
 			x = requests.post(url, json = each_data_point)

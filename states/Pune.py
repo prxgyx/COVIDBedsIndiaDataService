@@ -22,33 +22,6 @@ class Pune(State):
 		self.number_of_records = len(self.sheet_response)
 		logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
 
-	def get_dummy_data(self):
-		dummy_data = [
-			{
-				"DISTRICT": "Pune",
-				"AREA": "PCMC",
-				"HOSPITAL_CATEGORY": "DCHC",
-				"HOSPITAL_NAME": "Chaudhari Hopsital, Chikhali",
-				"HOSPITAL_ADDRESS": "Moshi - Alandi Rd, opp. Indian CNG petrol pump infront of madhubhan lodge, Jadhav Wadi, Chikhali, chikali, Maharashtra 412114",
-				"CONTACT": "8237770911",
-				"LAST_UPDATED": "1619607156000",
-				"OFFICER_NAME": "No Data Available",
-				"OFFICER_DESIGNATION": "No Data Available",
-				"CHARGES": "Chargeable",
-				"FEE_REGULATED_BEDS": "0",
-				"TOTAL_BEDS_ALLOCATED_TO_COVID": "23",
-				"TOTAL_BEDS_WITHOUT_OXYGEN": "5",
-				"AVAILABLE_BEDS_WITHOUT_OXYGEN": "3",
-				"TOTAL_BEDS_WITH_OXYGEN": "11",
-				"AVAILABLE_BEDS_WITH_OXYGEN": "2",
-				"TOTAL_ICU_BEDS_WITHOUT_VENTILATOR": "6",
-				"AVAILABLE_ICU_BEDS_WITHOUT_VENTILATOR": "0",
-				"TOTAL_ICU_BEDS_WITH_VENTILATOR": "1",
-				"AVAILABLE_ICU_BEDS_WITH_VENTILATOR": "0"
-			}
-		]
-		return dummy_data
-
 	def get_data_from_source(self):
 		http = urllib3.PoolManager()
 		
