@@ -125,6 +125,6 @@ class AndhraPradesh(State):
 
     def tag_critical_care(self, merged_loc_df):
         logging.info("Tagged critical care")
-        merged_loc_df["HAS_ICU_BEDS"] = merged_loc_df.apply(lambda row: logging.info(row) or int(row["ICU_TOTAL"]) > 0, axis=1)
+        merged_loc_df["HAS_ICU_BEDS"] = merged_loc_df.apply(lambda row: int(row["ICU_TOTAL"]) > 0, axis=1)
         merged_loc_df["HAS_VENTILATORS"] = merged_loc_df.apply(lambda row: int(row["VENTILATOR"]) > 0, axis=1)
         return merged_loc_df
