@@ -31,8 +31,7 @@ class Pune(State):
 
 		response = urllib.request.urlopen(self.source_url)
 		data = json.loads(response.read().decode())
-		# with open("x.json", 'w') as outfile:
-		# 	outfile.write(data)
+		
 		for each_data_point in data:
 			json_obj = {
 				"DISTRICT": each_data_point["district"],

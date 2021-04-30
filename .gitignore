@@ -4,4 +4,3 @@ geckodriver.log
 *.csv
 *.pyc
 DataService.log
-*.exe
