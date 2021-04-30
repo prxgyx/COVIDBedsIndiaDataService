@@ -4,3 +4,4 @@ geckodriver.log
 *.csv
 *.pyc
 DataService.log
+tmp_*
