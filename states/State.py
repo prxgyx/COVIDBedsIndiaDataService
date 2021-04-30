@@ -59,6 +59,8 @@ class State(object):
 		logging.info("Fetching location from master sheet")
 		location_tagged_data = self.get_location_from_master(govt_data_df, sheet_data_df)
 
+		self.write_temp_file()
+
 		nested_data = [location_tagged_data[i * n:(i + 1) * n] for i in range((len(location_tagged_data) + n - 1) // n )]
 
 		delete_data_response = self.delete_data()

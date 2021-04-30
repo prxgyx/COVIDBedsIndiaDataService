@@ -8,7 +8,7 @@ from .State import State
 class AndhraPradesh(State):
     source_url = "http://dashboard.covid19.ap.gov.in/ims/hospbed_reports/process.php"
     stein_url = "https://stein.hamaar.cloud/v1/storages/608982e003eef31f34d05a71"
-    main_sheet_name = "AndhraPradesh"
+    main_sheet_name = "Andhra Pradesh"
     state_name = "AndhraPradesh"
     sheet_url = stein_url + "/" + main_sheet_name
     district_params = [
