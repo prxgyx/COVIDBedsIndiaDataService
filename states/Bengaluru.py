@@ -10,13 +10,20 @@ from states.State import State
 class Bengaluru(State):
 
     def __init__(self):
+        super().__init__()
         self.state_name = "Bengaluru"
         self.stein_url = "https://stein.hamaar.cloud/v1/storages/608982f703eef3de2bd05a72"
         self.source_url = "https://bbmpgov.com/chbms"
-        self.custom_sheet_name = "Sheet5"
-        self.main_sheet_name = "Sheet3"
+        self.main_sheet_name = "Bengaluru"
         self.unique_columns = ["HOSPITAL_NAME"]
         self.old_info_columns = ["LOCATION"]
+        self.sheet_url = self.stein_url + "/" + self.main_sheet_name
+        # Fetching it here because need number of records in the Class
+        # need number of records because bulk delete API throws error entity too large
+        logging.info("Fetching data from Google Sheets")
+        self.sheet_response = requests.get(self.sheet_url).json()
+        self.number_of_records = len(self.sheet_response)
+        logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
 
     def get_data_from_source(self):
         response = requests.get(self.source_url)
@@ -53,9 +60,9 @@ class Bengaluru(State):
 
         finaldf.reset_index(drop=True)
 
-        output_json = json.loads(finaldf.to_json(orient="records"))
+        # output_json = json.loads(finaldf.to_json(orient="records"))
 
-        return output_json
+        return finaldf
 
     def tag_critical_care(self, merged_loc_df):
         logging.info("Tagged critical care")

@@ -11,7 +11,6 @@ class Chattisgarh(State):
 	def __init__(self):
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/6089833203eef38338d05a73"
 		self.source_url = "https://cg.nic.in/health/covid19/RTPBedAvailable.aspx"
-		self.custom_sheet_name = "Sheet10"
 		self.main_sheet_name = "Chattisgarh"
 
 	def get_dummy_data(self):

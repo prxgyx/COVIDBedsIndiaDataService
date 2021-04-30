@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 from states.State import State
 import logging
+import pandas as pd
 
 class TamilNadu(State):
 
@@ -10,37 +11,15 @@ class TamilNadu(State):
 		super().__init__()
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/608970d903eef3cbe0d05a6b"
 		self.source_url = "https://stopcorona.tn.gov.in/beds.php"
-		self.custom_sheet_name = "Sheet19"
 		self.main_sheet_name = "Tamil Nadu"
 		self.state_name = "Tamil Nadu"
-
-	def get_dummy_data(self):
-		dummy_data = [
-			{
-				"SNO":2,
-				"DISTRICT":"Chennai",
-				"HOSPITAL_NAME":"Bharathiraja Hospital & Research Centre Pvt Ltd",
-				"BEDS_FOR_SUSPECTED_CASES_TOTAL":"25",
-				"BEDS_FOR_SUSPECTED_CASES_OCCUPIED":"17",
-				"BEDS_FOR_SUSPECTED_CASES_VACANT":"8",
-				"OXYGEN_SUPPORTED_BEDS_TOTAL":"8",
-				"OXYGEN_SUPPORTED_BEDS_OCCUPIED":"6",
-				"OXYGEN_SUPPORTED_BEDS_VACANT":"2",
-				"NONOXYGEN_SUPPORTED_BEDS_TOTAL":"12",
-				"NONOXYGEN_SUPPORTED_BEDS_OCCUPIED":"11",
-				"NONOXYGEN_SUPPORTED_BEDS_VACANT":"1",
-				"ICU_BEDS_TOTAL":"5",
-				"ICU_BEDS_OCCUPIED":"0",
-				"ICU_BEDS_VACANT":"5",
-				"VENTILATOR_TOTAL":"2",
-				"VENTILATOR_OCCUPIED":"0",
-				"VENTILATOR_VACANT":"2",
-				"DATETIME":"2021-04-28 10:22:10",
-				"CONTACT":"9791295212",
-				"REMARKS":"28.04.2021"
-			}
-		]
-		return dummy_data
+		self.sheet_url = self.stein_url + "/" + self.main_sheet_name
+		# Fetching it here because need number of records in the Class
+		# need number of records because bulk delete API throws error entity too large
+		logging.info("Fetching data from Google Sheets")
+		self.sheet_response = requests.get(self.sheet_url).json()
+		self.number_of_records = len(self.sheet_response)
+		logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
 
 	def get_data_from_source(self):
 		http = urllib3.PoolManager()
@@ -79,7 +58,7 @@ class TamilNadu(State):
 			}
 			s_no = s_no + 1
 			output_json.append(json_obj)
-		return output_json
+		return pd.DataFrame(output_json)
 
 	def tag_critical_care(self, merged_loc_df):
 		logging.info("Tagged critical care")
