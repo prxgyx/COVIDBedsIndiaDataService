@@ -1,3 +1,4 @@
+from states.AndhraPradesh import AndhraPradesh
 from states.TamilNadu import TamilNadu
 from states.Pune import Pune
 from states.Telangana import Telangana
@@ -11,3 +12,5 @@ Pune().push_data()
 Haryana().push_data()
 
 Bengaluru().push_data()
+
+AndhraPradesh().push_data()
