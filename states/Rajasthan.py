@@ -15,7 +15,7 @@ class Rajasthan(State):
 	def __init__(self):
 		super().__init__()
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/608983ed03eef39bb4d05a77"
-		self.main_sheet_name = "Copy of Rajasthan"
+		self.main_sheet_name = "Rajasthan"
 		self.state_name = "Rajasthan"
 		self.source_url = "https://covidinfo.rajasthan.gov.in/Covid-19hospital-wisebedposition-wholeRajasthan.aspx"
 		self.sheet_url = self.stein_url + "/" + self.main_sheet_name
