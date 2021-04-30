@@ -13,8 +13,8 @@ class Bengaluru(State):
         self.state_name = "Bengaluru"
         self.stein_url = "https://stein.hamaar.cloud/v1/storages/608982f703eef3de2bd05a72"
         self.source_url = "https://bbmpgov.com/chbms"
-        self.custom_sheet_name = "Sheet3"
-        self.main_sheet_name = "Bengaluru"
+        self.custom_sheet_name = "Sheet5"
+        self.main_sheet_name = "Sheet3"
         self.unique_columns = ["HOSPITAL_NAME"]
         self.old_info_columns = ["LOCATION"]
 

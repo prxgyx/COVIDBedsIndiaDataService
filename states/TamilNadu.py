@@ -7,9 +7,10 @@ import logging
 class TamilNadu(State):
 
 	def __init__(self):
+		super().__init__()
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/608970d903eef3cbe0d05a6b"
 		self.source_url = "https://stopcorona.tn.gov.in/beds.php"
-		self.custom_sheet_name = "Sheet17"
+		self.custom_sheet_name = "Sheet19"
 		self.main_sheet_name = "Tamil Nadu"
 		self.state_name = "Tamil Nadu"
 
