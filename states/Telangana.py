@@ -14,8 +14,7 @@ class Telangana(State):
 		self.source_url = "http://164.100.112.24/SpringMVC/Hospital_Beds_Statistic_Bulletin_citizen.htm"
 		self.custom_sheet_name = "Sheet16"
 		self.main_sheet_name = "Telangana"
-		self.unique_columns = ["HOSPITAL_NAME", "DISTRICT"]
-		self.old_info_columns = ["LOCATION", "LAT", "LONG"]
+		super().__init__()
 
 
 	def get_dummy_data(self):

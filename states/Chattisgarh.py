@@ -14,8 +14,7 @@ class Chattisgarh(State):
 		self.source_url = "https://cg.nic.in/health/covid19/RTPBedAvailable.aspx"
 		self.custom_sheet_name = "Sheet10"
 		self.main_sheet_name = "Chattisgarh"
-		self.unique_columns = ["HOSPITAL_NAME", "DISTRICT"]
-		self.old_info_columns = ["LOCATION", "LAT", "LONG"]
+		super().__init__()
 
 
 	def get_dummy_data(self):
