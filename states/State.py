@@ -55,6 +55,11 @@ class State(object):
 
 		sheet_data_df = pd.DataFrame(self.sheet_response)
 
+		temp_file_name = "tmp_{}".format(self.state_name)
+
+		if sheet_data_df.empty:
+			sheet_data_df = pd.read_csv(temp_file_name)
+
 		# data = self.get_dummy_data()
 		logging.info("Fetching location from master sheet")
 		location_tagged_data = self.get_location_from_master(govt_data_df, sheet_data_df)
@@ -70,10 +75,9 @@ class State(object):
 				logging.info("Pushing 50 data points")
 				x = requests.post(self.sheet_url, json = each_data_point)
 				logging.info(x.text)
-			if not "error" in x.json():
-				temp_file_name = "tmp_{}".format(self.state_name)
-				logging.info("Removing temporary file")
-				os.remove(temp_file_name)
+			# if not "error" in x.json():
+			# 	logging.info("Removing temporary file")
+			# 	os.remove(temp_file_name)
 
 	def delete_data(self):
 		logging.info("Deleting data from {}".format(self.sheet_url))
