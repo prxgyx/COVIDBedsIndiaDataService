@@ -4,17 +4,22 @@ from selenium import webdriver
 import time
 import pandas as pd
 from states.State import State
+import logging
 
 
 class Telangana(State):
 
 	def __init__(self):
+		super().__init__()
 		self.state_name = "Telangana"
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/6089829403eef36d93d05a6f"
 		self.source_url = "http://164.100.112.24/SpringMVC/Hospital_Beds_Statistic_Bulletin_citizen.htm"
-		self.custom_sheet_name = "Sheet16"
 		self.main_sheet_name = "Telangana"
-		super().__init__()
+		self.sheet_url = self.stein_url + "/" + self.main_sheet_name
+		logging.info("Fetching data from Google Sheets")
+		self.sheet_response = requests.get(self.sheet_url).json()
+		self.number_of_records = len(self.sheet_response)
+		logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
 
 
 	def get_dummy_data(self):
@@ -141,8 +146,10 @@ class Telangana(State):
 		if retries >=5:
 			return []
 
+		browser.close()
+		browser.quit()
 
-		return output_json
+		return pd.DataFrame(output_json)
 
 
 
