@@ -55,18 +55,12 @@ class State(object):
 
 		sheet_data_df = pd.DataFrame(self.sheet_response)
 
-		temp_file_name = "tmp_{}".format(self.state_name)
-
-		if sheet_data_df.empty:
-			sheet_data_df = pd.read_csv(temp_file_name)
-
 		# data = self.get_dummy_data()
 		logging.info("Fetching location from master sheet")
 		location_tagged_data = self.get_location_from_master(govt_data_df, sheet_data_df)
 
 		nested_data = [location_tagged_data[i * n:(i + 1) * n] for i in range((len(location_tagged_data) + n - 1) // n )]
 
-		self.write_data_in_csv(sheet_data_df)
 		delete_data_response = self.delete_data()
 
 		if not "error" in delete_data_response:
@@ -88,6 +82,13 @@ class State(object):
 			response = requests.delete(self.sheet_url, data=json.dumps(self.delete_condition)).json()
 			logging.info(response)
 		return response
+
+	def write_temp_file(self):
+		temp_file_name = "tmp_{}".format(self.state_name)
+		sheet_data_df = pd.DataFrame(self.sheet_response)
+		if sheet_data_df.empty:
+			sheet_data_df = pd.read_csv(temp_file_name)
+		self.write_data_in_csv(sheet_data_df)
 
 	def write_data_in_csv(self, df):
 		temp_file_name = "tmp_{}".format(self.state_name)
