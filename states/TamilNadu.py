@@ -52,7 +52,7 @@ class TamilNadu(State):
 			"VENTILATOR_TOTAL": tds[14].text,
 			"VENTILATOR_OCCUPIED": tds[15].text,
 			"VENTILATOR_VACANT": tds[16].text,
-			"DATETIME": tds[17].text,
+			"LAST_UPDATED": tds[17].text,
 			"CONTACT": tds[18].text,
 			"REMARKS": tds[19].text
 			}
