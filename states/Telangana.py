@@ -91,7 +91,7 @@ class Telangana(State):
 
 				# the element for table takes time to load after page is loaded
 				time.sleep(4)
-				browser.find_elements_by_css_selector("table.table-responsive1 > tbody > tr > td")[1].click()
+				browser.find_elements_by_css_selector("table.table-responsive1 > tbody > tr > td > a")[0].click()
 
 				all_table_rows = browser.find_elements_by_css_selector("table.table-responsive1 > tbody > tr")
 
