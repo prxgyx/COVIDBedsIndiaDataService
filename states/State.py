@@ -6,6 +6,8 @@ import logging
 import uuid
 import sys
 import os
+import datetime
+
 
 logging.basicConfig(filename='DataService.log', filemode='a', format='%(asctime)-15s %(message)s', level=logging.DEBUG)
 
@@ -30,17 +32,26 @@ class State(object):
 			govt_data_df[unique_column] = govt_data_df[unique_column].str.strip()
 
 		sheet_data_df_subset = sheet_data_df[self.unique_columns + self.old_info_columns + ["UID", "IS_NEW_HOSPITAL"]]
+
+		bool_values = {"TRUE":True, "FALSE": False}
+		sheet_data_df_subset["IS_NEW_HOSPITAL"] = sheet_data_df_subset["IS_NEW_HOSPITAL"].map(bool_values)
+
 		merged_loc_df = pd.merge(govt_data_df, sheet_data_df_subset, 
 									on=self.unique_columns, how="left")
-		merged_loc_df["IS_NEW_HOSPITAL"] = merged_loc_df.apply(lambda row: True
-												 if isinstance(row["IS_NEW_HOSPITAL"], float) else row["IS_NEW_HOSPITAL"], axis=1)
+		merged_loc_df["IS_NEW_HOSPITAL"] = merged_loc_df["IS_NEW_HOSPITAL"].fillna(value=True)
 
-		merged_loc_df["UID"] = merged_loc_df.apply(lambda row: str(uuid.uuid4()) if row["IS_NEW_HOSPITAL"] else row["UID"], axis=1)
+		merged_loc_df["UID"] = merged_loc_df.apply(lambda row: row["UID"] if (isinstance(row["UID"], str) and 
+													row["UID"]!="") else str(uuid.uuid4()), axis=1)
 
 		merged_loc_df = self.tag_critical_care(merged_loc_df)
 		merged_loc_df = merged_loc_df.fillna('')
 		merged_loc_df["STEIN_ID"] = self.state_name
+		merged_loc_df["LAST_SYNCED"] = pd.to_datetime('now').replace(microsecond=0) + pd.Timedelta('05:30:00')
+		merged_loc_df["LAST_SYNCED"] = merged_loc_df["LAST_SYNCED"].astype(str)
+
+		merged_loc_df = merged_loc_df.drop_duplicates()
 		return merged_loc_df.to_dict('records')
+
 
 	def push_data(self):
 
@@ -51,29 +62,34 @@ class State(object):
 		logging.info("Fetching data from source")
 		govt_data_df = self.get_data_from_source()
 
-		self.get_error_message(self.sheet_response)
+		if len(govt_data_df) > 0:
+			self.get_error_message(self.sheet_response)
 
-		sheet_data_df = pd.DataFrame(self.sheet_response)
+			sheet_data_df = pd.DataFrame(self.sheet_response)
+			# data = self.get_dummy_data()
+			logging.info("Fetching location from master sheet")
+			location_tagged_data = self.get_location_from_master(govt_data_df, sheet_data_df)
 
-		# data = self.get_dummy_data()
-		logging.info("Fetching location from master sheet")
-		location_tagged_data = self.get_location_from_master(govt_data_df, sheet_data_df)
+			if len(sheet_data_df)*.9 > len(location_tagged_data):
+				logging.info("Row count with the scraped data is low, can cause data loss, Omitting writing to main file")
+			else:
+				self.write_temp_file()
+				nested_data = [location_tagged_data[i * n:(i + 1) * n] for i in range((len(location_tagged_data) + n - 1) // n )]	
 
-		self.write_temp_file()
+				delete_data_response = self.delete_data()
 
-		nested_data = [location_tagged_data[i * n:(i + 1) * n] for i in range((len(location_tagged_data) + n - 1) // n )]
+				if not "error" in delete_data_response:
+					logging.info("Posting data to Google Sheets")
+					for each_data_point in nested_data:
+						logging.info("Pushing 50 data points")
+						x = requests.post(self.sheet_url, json = each_data_point)
+						logging.info(x.text)
+					# if not "error" in x.json():
+					# 	logging.info("Removing temporary file")
+					# 	os.remove(temp_file_name)
+		else:
+			logging.info("No data retrieved from url")
 
-		delete_data_response = self.delete_data()
-
-		if not "error" in delete_data_response:
-			logging.info("Posting data to Google Sheets")
-			for each_data_point in nested_data:
-				logging.info("Pushing 50 data points")
-				x = requests.post(self.sheet_url, json = each_data_point)
-				logging.info(x.text)
-			# if not "error" in x.json():
-			# 	logging.info("Removing temporary file")
-			# 	os.remove(temp_file_name)
 
 	def delete_data(self):
 		logging.info("Deleting data from {}".format(self.sheet_url))

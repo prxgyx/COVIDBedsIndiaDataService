@@ -4,14 +4,24 @@ from selenium import webdriver
 import time
 import pandas as pd
 from states.State import State
+import logging
 
 
 class Chattisgarh(State):
 
 	def __init__(self):
+		super().__init__()
+		self.state_name = "Chattisgarh"
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/6089833203eef38338d05a73"
 		self.source_url = "https://cg.nic.in/health/covid19/RTPBedAvailable.aspx"
 		self.main_sheet_name = "Chattisgarh"
+		self.sheet_url = self.stein_url + "/" + self.main_sheet_name
+		logging.info("Fetching data from Google Sheets")
+		self.sheet_response = requests.get(self.sheet_url).json()
+		self.number_of_records = len(self.sheet_response)
+		logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
+		
+
 
 	def get_dummy_data(self):
 		dummy_data = [
@@ -41,6 +51,7 @@ class Chattisgarh(State):
         	}
 		]
 		return dummy_data
+
 
 	def get_data_from_source(self):
 		output_json =[]
@@ -98,7 +109,10 @@ class Chattisgarh(State):
 			"LAST_UPDATED_TIME": tds[21].text,
 			}
 			output_json.append(json_obj)
-		return output_json
+
+		browser.close()
+		browser.quit()
+		return pd.DataFrame(output_json)
 
 
 
@@ -111,4 +125,3 @@ class Chattisgarh(State):
 												if int(row["VENTILATORS_TOTAL"]) > 0 else False, axis=1)
 		
 		return merged_loc_df
-
