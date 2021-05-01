@@ -64,7 +64,7 @@ class State(object):
 			self.get_error_message(self.sheet_response)
 
 			sheet_data_df = pd.DataFrame(self.sheet_response)
-			# data = self.get_dummy_data()
+
 			logging.info("Fetching location from master sheet")
 			location_tagged_data = self.get_location_from_master(govt_data_df, sheet_data_df)
 
@@ -76,10 +76,8 @@ class State(object):
 				delete_data_response = self.delete_data_from_sheets()
 
 				if not "error" in delete_data_response:
-					self.push_data_to_sheets(location_tagged_data)
-					# if not "error" in x.json():
-					# 	logging.info("Removing temporary file")
-					# 	os.remove(temp_file_name)
+					self.push_data_to_sheets(location_tagged_data, 50)
+
 		else:
 			logging.info("No data retrieved from url")
 
