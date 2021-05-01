@@ -57,8 +57,6 @@ class State(object):
 
 		logging.info("Pushing for state - "+ self.state_name)
 
-		n = 50
-
 		logging.info("Fetching data from source")
 		govt_data_df = self.get_data_from_source()
 
@@ -73,25 +71,31 @@ class State(object):
 			if len(sheet_data_df)*.9 > len(location_tagged_data):
 				logging.info("Row count with the scraped data is low, can cause data loss, Omitting writing to main file")
 			else:
-				self.write_temp_file()
-				nested_data = [location_tagged_data[i * n:(i + 1) * n] for i in range((len(location_tagged_data) + n - 1) // n )]	
+				self.write_temp_file(sheet_data_df)
 
-				delete_data_response = self.delete_data()
+				delete_data_response = self.delete_data_from_sheets()
 
 				if not "error" in delete_data_response:
-					logging.info("Posting data to Google Sheets")
-					for each_data_point in nested_data:
-						logging.info("Pushing 50 data points")
-						x = requests.post(self.sheet_url, json = each_data_point)
-						logging.info(x.text)
+					self.push_data_to_sheets(location_tagged_data)
 					# if not "error" in x.json():
 					# 	logging.info("Removing temporary file")
 					# 	os.remove(temp_file_name)
 		else:
 			logging.info("No data retrieved from url")
 
+	def push_data_to_sheets(self, data_json, n=None):
+		logging.info("Posting data to Google Sheets")
+		if n:
+			nested_data = [data_json[i * n:(i + 1) * n] for i in range((len(data_json) + n - 1) // n )]
+			for each_data_point in nested_data:
+				logging.info("Pushing 50 data points")
+				x = requests.post(self.sheet_url, json = each_data_point)
+				logging.info(x.text)
+		else:
+			x = requests.post(self.sheet_url, json = data_json)
+			logging.info(x.text)
 
-	def delete_data(self):
+	def delete_data_from_sheets(self):
 		logging.info("Deleting data from {}".format(self.sheet_url))
 
 		number_of_loops = int(self.number_of_records / 50) + 1
@@ -101,12 +105,11 @@ class State(object):
 			logging.info(response)
 		return response
 
-	def write_temp_file(self):
+	def write_temp_file(self, data_df):
 		temp_file_name = "tmp_{}".format(self.state_name)
-		sheet_data_df = pd.DataFrame(self.sheet_response)
-		if sheet_data_df.empty:
-			sheet_data_df = pd.read_csv(temp_file_name)
-		self.write_data_in_csv(sheet_data_df)
+		if data_df.empty:
+			data_df = pd.read_csv(temp_file_name)
+		self.write_data_in_csv(data_df)
 
 	def write_data_in_csv(self, df):
 		temp_file_name = "tmp_{}".format(self.state_name)

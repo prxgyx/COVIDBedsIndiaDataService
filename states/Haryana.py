@@ -90,19 +90,11 @@ class Haryana(State):
 	def push_data(self):
 
 		url = self.stein_url + "/" + self.main_sheet_name
-		n = 50
 
 		logging.info("Fetching data from source")
 		data = self.get_data_from_source()
-		# data = self.get_dummy_data()
 
-		nested_data = [data[i * n:(i + 1) * n] for i in range((len(data) + n - 1) // n )]
-
-		self.write_temp_file()
-		self.delete_data()
-
-		logging.info("Posting data to Google Sheets")
-		for each_data_point in nested_data:
-			logging.info("Pushing 50 data points")
-			x = requests.post(url, json = each_data_point)
-			logging.info(x.text)
+		sheet_data_df = pd.DataFrame(self.sheet_response)
+		self.write_temp_file(sheet_data_df)
+		self.delete_data_from_sheets()
+		self.push_data_to_sheets(data, 50)
