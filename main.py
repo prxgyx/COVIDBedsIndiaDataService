@@ -7,6 +7,7 @@ from states.Pune import Pune
 from states.Rajasthan import Rajasthan
 from states.TamilNadu import TamilNadu
 from states.Telangana import Telangana
+from states.Chhattisgarh import Chhattisgarh
 
 state_classes = [
     AndhraPradesh,
@@ -15,6 +16,8 @@ state_classes = [
     Pune,
     Rajasthan,
     TamilNadu,
+    Chhattisgarh,
+    Telangana
 ]
 
 for state_class in state_classes:

@@ -90,7 +90,7 @@ class Telangana(State):
 				browser.get(self.source_url)
 
 				# the element for table takes time to load after page is loaded
-				time.sleep(4)
+				time.sleep(10)
 				browser.find_elements_by_css_selector("table.table-responsive1 > tbody > tr > td > a")[0].click()
 
 				all_table_rows = browser.find_elements_by_css_selector("table.table-responsive1 > tbody > tr")
@@ -120,7 +120,7 @@ class Telangana(State):
 						break
 
 
-				time.sleep(20)
+				time.sleep(30)
 
 				all_table_rows = browser.find_elements_by_css_selector("table.table-responsive1 > tbody > tr")
 
@@ -148,7 +148,6 @@ class Telangana(State):
 
 		browser.close()
 		browser.quit()
-
 		return pd.DataFrame(output_json)
 
 
