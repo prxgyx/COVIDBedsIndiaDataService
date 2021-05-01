@@ -41,8 +41,8 @@ class Telangana(State):
 	            "TOTAL": "19",
 	            "OCCUPIED": "11",
 	            "VACANT": "8",
-	            "DATE": "28/04/2021",
-	            "TIME": "6:15:04 PM",
+	            "LAST_UPDATED_DATE": "28/04/2021",
+	            "LAST_UPDATED_TIME": "6:15:04 PM",
 	            "TYPE": "Private"
         	}
 		]
@@ -68,8 +68,8 @@ class Telangana(State):
 			"TOTAL": tds[13-i].text,
 			"OCCUPIED": tds[14 -i].text,
 			"VACANT": tds[15-i].text,
-			"DATE": tds[16-i].text,
-			"TIME": tds[17-i].text,
+			"LAST_UPDATED_DATE": tds[16-i].text,
+			"LAST_UPDATED_TIME": tds[17-i].text,
 			"TYPE": type_hospital
 		}
 
