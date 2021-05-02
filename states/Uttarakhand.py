@@ -6,12 +6,15 @@ from states.State import State
 
 
 class Uttarakhand(State):
-    def __init__(self):
+    def __init__(self, test_prefix=None):
         super().__init__()
-        self.stein_url = "https://stein.hamaar.cloud/v1/storages/608983ed03eef39bb4d05a77"
-        self.main_sheet_name = "Uttarakhand"
-        self.state_name = "Uttarakhand"
+        self.stein_url = "https://stein.hamaar.cloud/v1/storages/608d542333382c01aecf8c95"
         self.source_url = "https://covid19.uk.gov.in/bedssummary.aspx"
+        self.state_name = "Uttarakhand"
+        self.main_sheet_name = "Uttarakhand"
+        if test_prefix:
+            self.main_sheet_name = test_prefix + self.main_sheet_name
+        self.old_info_columns = ["LOCATION"]
         self.sheet_url = self.stein_url + "/" + self.main_sheet_name
         # Fetching it here because need number of records in the Class
         # need number of records because bulk delete API throws error entity too large
