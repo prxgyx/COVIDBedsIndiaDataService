@@ -6,3 +6,4 @@ geckodriver.log
 DataService.log
 tmp_*
 *.exe
+/.idea

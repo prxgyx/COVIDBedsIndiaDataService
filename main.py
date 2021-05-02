@@ -9,6 +9,7 @@ from states.Rajasthan import Rajasthan
 from states.TamilNadu import TamilNadu
 from states.Telangana import Telangana
 from states.Chhattisgarh import Chhattisgarh
+from states.Uttarakhand import Uttarakhand
 
 from states.notification.TelegramBot import TelegramBot
 
@@ -19,7 +20,8 @@ sim_state_classes = [
     Haryana,
     Pune,
     Rajasthan,
-    TamilNadu
+    TamilNadu,
+    Uttarakhand
 ]
 
 com_state_classes = [
