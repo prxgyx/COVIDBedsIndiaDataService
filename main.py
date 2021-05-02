@@ -10,6 +10,10 @@ from states.TamilNadu import TamilNadu
 from states.Telangana import Telangana
 from states.Chhattisgarh import Chhattisgarh
 
+from states.notification.TelegramBot import TelegramBot
+
+covidbedsbot = TelegramBot()
+
 state_classes = [
     AndhraPradesh,
     Bengaluru,
@@ -40,5 +44,8 @@ if __name__ == '__main__':
             state_object.push_data()
         except Exception as e:
             logging.exception(f"Error processing state {state_class}")
+            covidbedsbot.send_message(f"Error processing state {state_class}")
+
+
 
     logging.info("Done.")

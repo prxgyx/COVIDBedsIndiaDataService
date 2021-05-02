@@ -7,7 +7,7 @@ import uuid
 import sys
 import os
 import datetime
-from states.TelegramBot import TelegramBot
+from states.notification.TelegramBot import TelegramBot
 
 
 logging.basicConfig(filename='DataService.log', filemode='a', format='%(asctime)-15s %(message)s', level=logging.DEBUG)
@@ -27,8 +27,16 @@ class State(object):
 	# 	else:
 	# 		raise Exception("State {} not supported".format(state_name))
 
-	def get_location_from_master(self, govt_data_df, sheet_data_df):
+	def get_uid_lastsynced(self, merged_loc_df):
+		merged_loc_df["UID"] = merged_loc_df.apply(lambda row: row["UID"] if (isinstance(row["UID"], str) and 
+													row["UID"]!="") else str(uuid.uuid4()), axis=1)
+		merged_loc_df["LAST_SYNCED"] = pd.to_datetime('now').replace(microsecond=0) + pd.Timedelta('05:30:00')
+		merged_loc_df["LAST_SYNCED"] = merged_loc_df["LAST_SYNCED"].astype(str)
+		return merged_loc_df
 
+
+
+	def get_location_from_master(self, govt_data_df, sheet_data_df):
 		for unique_column in self.unique_columns:
 			sheet_data_df[unique_column] = sheet_data_df[unique_column].str.strip()
 			govt_data_df[unique_column] = govt_data_df[unique_column].str.strip()
@@ -42,16 +50,12 @@ class State(object):
 									on=self.unique_columns, how="left")
 		merged_loc_df["IS_NEW_HOSPITAL"] = merged_loc_df["IS_NEW_HOSPITAL"].fillna(value=True)
 
-		merged_loc_df["UID"] = merged_loc_df.apply(lambda row: row["UID"] if (isinstance(row["UID"], str) and 
-													row["UID"]!="") else str(uuid.uuid4()), axis=1)
-
 		merged_loc_df = self.tag_critical_care(merged_loc_df)
 		merged_loc_df = merged_loc_df.fillna('')
 		merged_loc_df["STEIN_ID"] = self.state_name
-		merged_loc_df["LAST_SYNCED"] = pd.to_datetime('now').replace(microsecond=0) + pd.Timedelta('05:30:00')
-		merged_loc_df["LAST_SYNCED"] = merged_loc_df["LAST_SYNCED"].astype(str)
-
 		merged_loc_df = merged_loc_df.drop_duplicates()
+
+		merged_loc_df = self.get_uid_lastsynced(merged_loc_df)	
 		return merged_loc_df.to_dict('records')
 
 
@@ -82,6 +86,9 @@ class State(object):
 					self.push_data_to_sheets(location_tagged_data, 50)
 					covidbedsbot.send_message(self.success_msg_info(sheet_data_df, location_tagged_data))
 					covidbedsbot.send_local_file("tmp_{}".format(self.state_name))
+				else:
+					failure_reason = "Error deleting data from sheets"
+					covidbedsbot.send_message(self.error_msg_info(failure_reason, sheet_data_df))
 
 		else:
 			failure_reason = "No data retrieved from url"
@@ -109,13 +116,14 @@ class State(object):
 		return error_msg
 
 
-
+	
 	def tag_critical_care(self, merged_loc_df):
 		logging.info("Tagged critical care")
 
 		merged_loc_df["HAS_ICU_BEDS"] = merged_loc_df.apply(lambda row: int(row[self.icu_beds_column]) + int(row[self.vent_beds_column]) > 0, axis=1)
 		merged_loc_df["HAS_VENTILATORS"] = merged_loc_df.apply(lambda row: int(row[self.vent_beds_column]) > 0, axis=1)
 		return merged_loc_df
+
 
 	def push_data_to_sheets(self, data_json, n=None):
 		logging.info("Posting data to Google Sheets")
