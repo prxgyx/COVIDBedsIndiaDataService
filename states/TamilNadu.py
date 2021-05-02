@@ -7,11 +7,13 @@ import pandas as pd
 
 class TamilNadu(State):
 
-	def __init__(self):
+	def __init__(self, test_prefix=None):
 		super().__init__()
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/608970d903eef3cbe0d05a6b"
 		self.source_url = "https://stopcorona.tn.gov.in/beds.php"
 		self.main_sheet_name = "Tamil Nadu"
+		if test_prefix:
+			self.main_sheet_name = test_prefix + self.main_sheet_name
 		self.state_name = "Tamil Nadu"
 		self.sheet_url = self.stein_url + "/" + self.main_sheet_name
 		# Fetching it here because need number of records in the Class
@@ -20,6 +22,8 @@ class TamilNadu(State):
 		self.sheet_response = requests.get(self.sheet_url).json()
 		self.number_of_records = len(self.sheet_response)
 		logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
+		self.icu_beds_column = "ICU_BEDS_TOTAL"
+		self.vent_beds_column = "VENTILATOR_TOTAL"
 
 	def get_data_from_source(self):
 		http = urllib3.PoolManager()
@@ -59,9 +63,3 @@ class TamilNadu(State):
 			s_no = s_no + 1
 			output_json.append(json_obj)
 		return pd.DataFrame(output_json)
-
-	def tag_critical_care(self, merged_loc_df):
-		logging.info("Tagged critical care")
-		merged_loc_df["HAS_ICU_BEDS"] = merged_loc_df.apply(lambda row: int(row["ICU_BEDS_TOTAL"]) > 0, axis=1)
-		merged_loc_df["HAS_VENTILATORS"] = merged_loc_df.apply(lambda row: int(row["VENTILATOR_TOTAL"]) > 0, axis=1)
-		return merged_loc_df

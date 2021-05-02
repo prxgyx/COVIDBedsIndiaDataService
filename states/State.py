@@ -110,6 +110,13 @@ class State(object):
 
 
 
+	def tag_critical_care(self, merged_loc_df):
+		logging.info("Tagged critical care")
+
+		merged_loc_df["HAS_ICU_BEDS"] = merged_loc_df.apply(lambda row: int(row[self.icu_beds_column]) + int(row[self.vent_beds_column]) > 0, axis=1)
+		merged_loc_df["HAS_VENTILATORS"] = merged_loc_df.apply(lambda row: int(row[self.vent_beds_column]) > 0, axis=1)
+		return merged_loc_df
+
 	def push_data_to_sheets(self, data_json, n=None):
 		logging.info("Posting data to Google Sheets")
 		if n:

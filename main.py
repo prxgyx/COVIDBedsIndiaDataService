@@ -1,4 +1,5 @@
 import logging
+import argparse
 
 from states.AndhraPradesh import AndhraPradesh
 from states.Bengaluru import Bengaluru
@@ -20,11 +21,24 @@ state_classes = [
     Telangana
 ]
 
-for state_class in state_classes:
-    try:
-        logging.info(f"Processing state {state_class}")
-        state_class().push_data()
-    except Exception as e:
-        logging.exception(f"Error processing state {state_class}")
+if __name__ == '__main__':
+    '''
+        Main function to execute
+    '''
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--mode', help='Supported - prod or test')
 
-logging.info("Done.")
+    args, unknown = parser.parse_known_args()
+
+    for state_class in state_classes:
+        try:
+            logging.info(f"Processing state {state_class}")
+            if args.mode == "test":
+                state_object = state_class("Test ")
+            else:
+                state_object = state_class()
+            state_object.push_data()
+        except Exception as e:
+            logging.exception(f"Error processing state {state_class}")
+
+    logging.info("Done.")
