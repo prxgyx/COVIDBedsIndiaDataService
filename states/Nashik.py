@@ -10,12 +10,14 @@ from states.State import State
 
 class Nashik(State):
 
-    def __init__(self):
+    def __init__(self, test_prefix=None):
         super().__init__()
-        self.stein_url = "https://stein.hamaar.cloud/v1/storages/608983ed03eef39bb4d05a77"
-        self.main_sheet_name = "Nashik"
         self.state_name = "Nashik"
+        self.stein_url = "https://stein.hamaar.cloud/v1/storages/608983ed03eef39bb4d05a77"
         self.source_url = "http://covidcbrs.nmc.gov.in/home/searchHosptial"
+        self.main_sheet_name = "Nashik"
+        if test_prefix:
+            self.main_sheet_name = test_prefix + self.main_sheet_name
         self.sheet_url = self.stein_url + "/" + self.main_sheet_name
         # Fetching it here because need number of records in the Class
         # need number of records because bulk delete API throws error entity too large
@@ -23,6 +25,8 @@ class Nashik(State):
         self.sheet_response = requests.get(self.sheet_url).json()
         self.number_of_records = len(self.sheet_response)
         logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
+        self.icu_beds_column = "ICU_BEDS_TOTAL"
+        self.vent_beds_column = "VENTILATOR_TOTAL"
 
     def get_data_from_source(self):
         s_no = 0
@@ -35,8 +39,8 @@ class Nashik(State):
 
         for tr in rows:
             tds = tr.find_all('td')
-            datatargetModel = tds[1].find_all('a')[0]['data-target']
-            elements = soup.find_all('div', attrs={'id': datatargetModel.strip("'").strip("#")})
+            datatarget_model = tds[1].find_all('a')[0]['data-target']
+            elements = soup.find_all('div', attrs={'id': datatarget_model.strip("'").strip("#")})
             element_with_list = elements[0].find('div', class_='modal-body')
             list_elements = element_with_list.find_all('li')
 
@@ -71,9 +75,3 @@ class Nashik(State):
             output_json.append(hosp)
 
         return pd.DataFrame(output_json)
-
-    def tag_critical_care(self, merged_loc_df):
-        logging.info("Tagged critical care")
-        merged_loc_df["HAS_ICU_BEDS"] = merged_loc_df.apply(lambda row: int(row["ICU_BEDS_TOTAL"]) > 0, axis=1)
-        merged_loc_df["HAS_VENTILATORS"] = merged_loc_df.apply(lambda row: int(row["VENTILATOR_TOTAL"]) > 0, axis=1)
-        return merged_loc_df
