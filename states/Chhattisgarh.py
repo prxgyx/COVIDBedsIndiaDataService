@@ -64,7 +64,7 @@ class Chhattisgarh(State):
 		page_retrieved, retries = False, 0
 
 		# in case of heavy traffic the page fails to load so retrying till it loads
-		while not page_retrieved and retries < 5:
+		while not page_retrieved and retries < 3:
 			try:
 				browser.get(self.source_url)
 				time.sleep(5)
@@ -74,7 +74,7 @@ class Chhattisgarh(State):
 				retries +=1
 				time.sleep(10)
 
-		if retries >=5:
+		if retries >=3:
 			return [] 
 
 		# Clicking the Show data button
