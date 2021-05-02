@@ -35,17 +35,17 @@ if __name__ == '__main__':
     args, unknown = parser.parse_known_args()
 
     for state_class in state_classes:
+        state_name = state_class.__name__
         try:
-            logging.info(f"Processing state {state_class}")
+            logging.info(f"Processing state {state_name}")
             if args.mode == "test":
                 state_object = state_class("Test ")
             else:
                 state_object = state_class()
             state_object.push_data()
         except Exception as e:
-            logging.exception(f"Error processing state {state_class}")
-            covidbedsbot.send_message(f"Error processing state {state_class}")
-
+            logging.exception(f"Error processing state {state_name}")
+            covidbedsbot.send_message(u'\u274c'+f" Error processing state {state_name}")
 
 
     logging.info("Done.")
