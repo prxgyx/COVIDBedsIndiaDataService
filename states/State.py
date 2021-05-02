@@ -7,9 +7,11 @@ import uuid
 import sys
 import os
 import datetime
+from states.notification.TelegramBot import TelegramBot
 
 
 logging.basicConfig(filename='DataService.log', filemode='a', format='%(asctime)-15s %(message)s', level=logging.DEBUG)
+covidbedsbot = TelegramBot()
 
 class State(object):
 
@@ -25,8 +27,16 @@ class State(object):
 	# 	else:
 	# 		raise Exception("State {} not supported".format(state_name))
 
-	def get_location_from_master(self, govt_data_df, sheet_data_df):
+	def get_uid_lastsynced(self, merged_loc_df):
+		merged_loc_df["UID"] = merged_loc_df.apply(lambda row: row["UID"] if (isinstance(row["UID"], str) and 
+													row["UID"]!="") else str(uuid.uuid4()), axis=1)
+		merged_loc_df["LAST_SYNCED"] = pd.to_datetime('now').replace(microsecond=0) + pd.Timedelta('05:30:00')
+		merged_loc_df["LAST_SYNCED"] = merged_loc_df["LAST_SYNCED"].astype(str)
+		return merged_loc_df
 
+
+
+	def get_location_from_master(self, govt_data_df, sheet_data_df):
 		for unique_column in self.unique_columns:
 			sheet_data_df[unique_column] = sheet_data_df[unique_column].str.strip()
 			govt_data_df[unique_column] = govt_data_df[unique_column].str.strip()
@@ -40,16 +50,12 @@ class State(object):
 									on=self.unique_columns, how="left")
 		merged_loc_df["IS_NEW_HOSPITAL"] = merged_loc_df["IS_NEW_HOSPITAL"].fillna(value=True)
 
-		merged_loc_df["UID"] = merged_loc_df.apply(lambda row: row["UID"] if (isinstance(row["UID"], str) and 
-													row["UID"]!="") else str(uuid.uuid4()), axis=1)
-
 		merged_loc_df = self.tag_critical_care(merged_loc_df)
 		merged_loc_df = merged_loc_df.fillna('')
 		merged_loc_df["STEIN_ID"] = self.state_name
-		merged_loc_df["LAST_SYNCED"] = pd.to_datetime('now').replace(microsecond=0) + pd.Timedelta('05:30:00')
-		merged_loc_df["LAST_SYNCED"] = merged_loc_df["LAST_SYNCED"].astype(str)
-
 		merged_loc_df = merged_loc_df.drop_duplicates()
+
+		merged_loc_df = self.get_uid_lastsynced(merged_loc_df)	
 		return merged_loc_df.to_dict('records')
 
 
@@ -59,17 +65,18 @@ class State(object):
 
 		logging.info("Fetching data from source")
 		govt_data_df = self.get_data_from_source()
+		sheet_data_df = pd.DataFrame(self.sheet_response)
 
 		if len(govt_data_df) > 0:
 			self.get_error_message(self.sheet_response)
-
-			sheet_data_df = pd.DataFrame(self.sheet_response)
 
 			logging.info("Fetching location from master sheet")
 			location_tagged_data = self.get_location_from_master(govt_data_df, sheet_data_df)
 
 			if len(sheet_data_df)*.9 > len(location_tagged_data):
-				logging.info("Row count with the scraped data is low, can cause data loss, Omitting writing to main file")
+				failure_reason = "Row count with the scraped data is low, can cause data loss, Omitting writing to main file"
+				logging.info(failure_reason)
+				covidbedsbot.send_message(self.error_msg_info(failure_reason, sheet_data_df))
 			else:
 				self.write_temp_file(sheet_data_df)
 
@@ -77,16 +84,46 @@ class State(object):
 
 				if not "error" in delete_data_response:
 					self.push_data_to_sheets(location_tagged_data, 50)
+					covidbedsbot.send_message(self.success_msg_info(sheet_data_df, location_tagged_data))
+					covidbedsbot.send_local_file("tmp_{}".format(self.state_name))
+				else:
+					failure_reason = "Error deleting data from sheets"
+					covidbedsbot.send_message(self.error_msg_info(failure_reason, sheet_data_df))
 
 		else:
-			logging.info("No data retrieved from url")
+			failure_reason = "No data retrieved from url"
+			logging.info(failure_reason)
+			covidbedsbot.send_message(self.error_msg_info(failure_reason, sheet_data_df))
 
+
+	def success_msg_info(self, sheet_data_df, location_tagged_data):
+		success_msg = u'\u2714'+ " Run successful for "+ self.state_name +"\n"
+		success_msg += u'\u2022' + " Previous record count - "+str(len(sheet_data_df)) + "\n"
+		success_msg += u'\u2022' + " Current record count - "+str(len(location_tagged_data)) +"\n"
+
+		IS_NEW_HOSPITAL_COUNT = len([x for x in location_tagged_data if x["IS_NEW_HOSPITAL"]])
+		success_msg += u'\u2022' + " Hospitals with IS_NEW_HOSPITAL true - "+str(IS_NEW_HOSPITAL_COUNT) +"\n"
+		success_msg += u'\u2022' + " Synced at - "+ location_tagged_data[0]["LAST_SYNCED"]
+		return success_msg
+
+		
+	def error_msg_info(self, failure_reason, sheet_data_df):
+		error_msg = u'\u274c'+ " Run failed for "+self.state_name+"\n"
+		error_msg += u'\u2022' + " ERROR: "+ failure_reason+"\n"
+		error_msg += u'\u2022' + " No data is updated to the sheet"+"\n"
+		error_msg += u'\u2022' + " Previous record count - "+str(len(sheet_data_df)) + "\n"
+		error_msg += u'\u2022' + " The sheet was last updated at "+sheet_data_df.iloc[0]["LAST_SYNCED"]
+		return error_msg
+
+
+	
 	def tag_critical_care(self, merged_loc_df):
 		logging.info("Tagged critical care")
 
 		merged_loc_df["HAS_ICU_BEDS"] = merged_loc_df.apply(lambda row: int(row[self.icu_beds_column]) + int(row[self.vent_beds_column]) > 0, axis=1)
 		merged_loc_df["HAS_VENTILATORS"] = merged_loc_df.apply(lambda row: int(row[self.vent_beds_column]) > 0, axis=1)
 		return merged_loc_df
+
 
 	def push_data_to_sheets(self, data_json, n=None):
 		logging.info("Posting data to Google Sheets")

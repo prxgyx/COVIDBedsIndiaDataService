@@ -7,6 +7,13 @@ from urllib.request import urlopen
 import pandas as pd
 import json
 import logging
+from states.notification.TelegramBot import TelegramBot
+import uuid
+import datetime
+
+
+covidbedsbot = TelegramBot()
+
 
 class Haryana(State):
 
@@ -83,11 +90,16 @@ class Haryana(State):
 		# with open('data.txt', 'w') as outfile:
 		# 	json.dump(output_json, outfile)
 
-	def get_key(self, val):
-		for key, value in self.distL.items():
-			if val == value:
-				return key
-		return "key doesn't exist"
+
+	def add_uid_lastsynced(self, data):
+		now  = datetime.datetime.now()
+		for hosp_info in data:
+			hosp_info["UID"] = str(uuid.uuid4())
+			hosp_info["LAST_SYNCED"] = now.strftime("%Y-%m-%d, %H:%M:%S")   
+			hosp_info["IS_NEW_HOSPITAL"] = False
+		return data 
+
+
 
 	def push_data(self):
 
@@ -95,8 +107,30 @@ class Haryana(State):
 
 		logging.info("Fetching data from source")
 		data = self.get_data_from_source()
+		
+		if len(data) > 0:
+			sheet_data_df = pd.DataFrame(self.sheet_response)
+			data = self.add_uid_lastsynced(data)
 
-		sheet_data_df = pd.DataFrame(self.sheet_response)
-		self.write_temp_file(sheet_data_df)
-		self.delete_data_from_sheets()
-		self.push_data_to_sheets(data, 50)
+			self.write_temp_file(sheet_data_df)
+			delete_data_response = self.delete_data_from_sheets()
+			if not "error" in delete_data_response:
+				self.push_data_to_sheets(data, 50)
+				covidbedsbot.send_message(self.success_msg_info(sheet_data_df, data))
+				covidbedsbot.send_local_file("tmp_{}".format(self.state_name))
+
+			else:
+				failure_reason = "Error deleting data from sheets"
+				covidbedsbot.send_message(self.error_msg_info(failure_reason, sheet_data_df))
+		else:
+			failure_reason = "No data retrieved from url"
+			logging.info(failure_reason)
+			covidbedsbot.send_message(self.error_msg_info(failure_reason, sheet_data_df))
+
+
+
+	def get_key(self, val):
+		for key, value in self.distL.items():
+			if val == value:
+				return key
+		return "key doesn't exist"

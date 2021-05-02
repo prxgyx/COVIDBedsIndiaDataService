@@ -67,6 +67,7 @@ class Chhattisgarh(State):
 		while not page_retrieved and retries < 5:
 			try:
 				browser.get(self.source_url)
+				time.sleep(5)
 				page_retrieved = True
 			except:
 				print("Page failed to load. Retrying")
@@ -78,6 +79,7 @@ class Chhattisgarh(State):
 
 		# Clicking the Show data button
 		browser.find_element_by_css_selector("input[value='Show']").click()
+		time.sleep(10)
 
 		# extracting all table rows
 		elements = browser.find_elements_by_css_selector("table.table > tbody > tr")
