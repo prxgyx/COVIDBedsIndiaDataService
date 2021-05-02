@@ -9,12 +9,14 @@ import logging
 
 class Telangana(State):
 
-	def __init__(self):
+	def __init__(self, test_prefix=None):
 		super().__init__()
 		self.state_name = "Telangana"
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/6089829403eef36d93d05a6f"
 		self.source_url = "http://164.100.112.24/SpringMVC/Hospital_Beds_Statistic_Bulletin_citizen.htm"
 		self.main_sheet_name = "Telangana"
+		if test_prefix:
+			self.main_sheet_name = test_prefix + self.main_sheet_name
 		self.sheet_url = self.stein_url + "/" + self.main_sheet_name
 		logging.info("Fetching data from Google Sheets")
 		self.sheet_response = requests.get(self.sheet_url).json()

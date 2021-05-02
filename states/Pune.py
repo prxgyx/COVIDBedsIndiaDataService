@@ -8,11 +8,13 @@ import pandas as pd
 
 class Pune(State):
 
-	def __init__(self):
+	def __init__(self, test_prefix=None):
 		super().__init__()
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/6089822703eef30c1cd05a6e"
 		self.source_url = "https://covidpune.com/data/covidpune.com/bed_data.json?_=7528f9d_20210426225550"
 		self.main_sheet_name = "Pune"
+		if test_prefix:
+			self.main_sheet_name = test_prefix + self.main_sheet_name
 		self.state_name = "Pune"
 		self.sheet_url = self.stein_url + "/" + self.main_sheet_name
 		# Fetching it here because need number of records in the Class

@@ -10,11 +10,13 @@ import logging
 
 class Haryana(State):
 
-	def __init__(self):
+	def __init__(self, test_prefix=None):
 		super().__init__()
 		self.stein_url = "https://stein.hamaar.cloud/v1/storages/6089834e03eef33448d05a74"
 		self.distL={"Ambala":1,"Bhiwani":2,"Chandigarh":24,"Charki Dadri":3,"Faridabad":4,"Fatehabad":5,"Gurugram":6,"Hisar":7,"Jhajjar":8,"Jind":9,"Kaithal":10,"Karnal":11,"Kurukshetra":12,"Mahendragarh":13,"Nuh":23,"Palwal":15,"Panchkula":16,"Panipat":17,"Rewari":18,"Rohtak":19,"Sirsa":20,"Sonipat":21,"Yamunanagar":22}
 		self.main_sheet_name = "Haryana"
+		if test_prefix:
+			self.main_sheet_name = test_prefix + self.main_sheet_name
 		self.state_name = "Haryana"
 		self.sheet_url = self.stein_url + "/" + self.main_sheet_name
 		# Fetching it here because need number of records in the Class

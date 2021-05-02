@@ -8,9 +8,6 @@ from .State import State
 class AndhraPradesh(State):
     source_url = "http://dashboard.covid19.ap.gov.in/ims/hospbed_reports/process.php"
     stein_url = "https://stein.hamaar.cloud/v1/storages/608982e003eef31f34d05a71"
-    main_sheet_name = "Andhra Pradesh"
-    state_name = "AndhraPradesh"
-    sheet_url = stein_url + "/" + main_sheet_name
     district_params = [
         {
             "city": "Anantapur",
@@ -79,8 +76,13 @@ class AndhraPradesh(State):
         },
     ]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, test_prefix=None, *args, **kwargs):
         super().__init__()
+        self.main_sheet_name = "Andhra Pradesh"
+        if test_prefix:
+            self.main_sheet_name = test_prefix + self.main_sheet_name
+        self.state_name = "AndhraPradesh"
+        self.sheet_url = stein_url + "/" + main_sheet_name
         logging.info("Fetching data from Google Sheets")
         self.sheet_response = requests.get(self.sheet_url).json()
         self.number_of_records = len(self.sheet_response)

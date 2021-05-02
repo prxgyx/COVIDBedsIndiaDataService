@@ -9,12 +9,15 @@ from states.State import State
 
 class Bengaluru(State):
 
-    def __init__(self):
+    def __init__(self, test_prefix=None):
         super().__init__()
         self.state_name = "Bengaluru"
         self.stein_url = "https://stein.hamaar.cloud/v1/storages/608982f703eef3de2bd05a72"
         self.source_url = "https://bbmpgov.com/chbms"
         self.main_sheet_name = "Bengaluru"
+        if test_prefix:
+            self.main_sheet_name = test_prefix + self.main_sheet_name
+        print(self.main_sheet_name)
         self.unique_columns = ["HOSPITAL_NAME"]
         self.old_info_columns = ["LOCATION"]
         self.sheet_url = self.stein_url + "/" + self.main_sheet_name
