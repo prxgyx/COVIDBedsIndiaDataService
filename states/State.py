@@ -67,7 +67,7 @@ class State(object):
 			self.get_error_message(self.sheet_response)
 
 			logging.info("Fetching location from master sheet")
-			location_tagged_data = self.get_location_from_master(govt_data_df, sheet_data_df)[:200]
+			location_tagged_data = self.get_location_from_master(govt_data_df, sheet_data_df)
 
 			if len(sheet_data_df)*.9 > len(location_tagged_data):
 				failure_reason = "Row count with the scraped data is low, can cause data loss, Omitting writing to main file"
@@ -99,13 +99,13 @@ class State(object):
 		success_msg += u'\u2022' + " Synced at - "+ location_tagged_data[0]["LAST_SYNCED"]
 		return success_msg
 
-
+		
 	def error_msg_info(self, failure_reason, sheet_data_df):
 		error_msg = u'\u274c'+ " Run failed for "+self.state_name+"\n"
 		error_msg += u'\u2022' + " ERROR: "+ failure_reason+"\n"
 		error_msg += u'\u2022' + " No data is updated to the sheet"+"\n"
 		error_msg += u'\u2022' + " Previous record count - "+str(len(sheet_data_df)) + "\n"
-		error_msg += u'\u2022' + " The sheet was las updated at "+sheet_data_df.iloc[0]["LAST_SYNCED"]
+		error_msg += u'\u2022' + " The sheet was last updated at "+sheet_data_df.iloc[0]["LAST_SYNCED"]
 		return error_msg
 
 
