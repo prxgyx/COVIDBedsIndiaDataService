@@ -82,7 +82,7 @@ class AndhraPradesh(State):
         if test_prefix:
             self.main_sheet_name = test_prefix + self.main_sheet_name
         self.state_name = "AndhraPradesh"
-        self.sheet_url = stein_url + "/" + main_sheet_name
+        self.sheet_url = self.stein_url + "/" + self.main_sheet_name
         logging.info("Fetching data from Google Sheets")
         self.sheet_response = requests.get(self.sheet_url).json()
         self.number_of_records = len(self.sheet_response)
