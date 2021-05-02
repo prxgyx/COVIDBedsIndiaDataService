@@ -86,15 +86,3 @@ class Haryana(State):
 			if val == value:
 				return key
 		return "key doesn't exist"
-
-	def push_data(self):
-
-		url = self.stein_url + "/" + self.main_sheet_name
-
-		logging.info("Fetching data from source")
-		data = self.get_data_from_source()
-
-		sheet_data_df = pd.DataFrame(self.sheet_response)
-		self.write_temp_file(sheet_data_df)
-		self.delete_data_from_sheets()
-		self.push_data_to_sheets(data, 50)

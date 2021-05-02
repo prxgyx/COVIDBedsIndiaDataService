@@ -7,9 +7,11 @@ import uuid
 import sys
 import os
 import datetime
+from states.TelegramBot import TelegramBot
 
 
 logging.basicConfig(filename='DataService.log', filemode='a', format='%(asctime)-15s %(message)s', level=logging.DEBUG)
+covidbedsbot = TelegramBot()
 
 class State(object):
 
@@ -59,17 +61,18 @@ class State(object):
 
 		logging.info("Fetching data from source")
 		govt_data_df = self.get_data_from_source()
+		sheet_data_df = pd.DataFrame(self.sheet_response)
 
 		if len(govt_data_df) > 0:
 			self.get_error_message(self.sheet_response)
 
-			sheet_data_df = pd.DataFrame(self.sheet_response)
-
 			logging.info("Fetching location from master sheet")
-			location_tagged_data = self.get_location_from_master(govt_data_df, sheet_data_df)
+			location_tagged_data = self.get_location_from_master(govt_data_df, sheet_data_df)[:200]
 
 			if len(sheet_data_df)*.9 > len(location_tagged_data):
-				logging.info("Row count with the scraped data is low, can cause data loss, Omitting writing to main file")
+				failure_reason = "Row count with the scraped data is low, can cause data loss, Omitting writing to main file"
+				logging.info(failure_reason)
+				covidbedsbot.send_message(self.error_msg_info(failure_reason, sheet_data_df))
 			else:
 				self.write_temp_file(sheet_data_df)
 
@@ -77,9 +80,35 @@ class State(object):
 
 				if not "error" in delete_data_response:
 					self.push_data_to_sheets(location_tagged_data, 50)
+					covidbedsbot.send_message(self.success_msg_info(sheet_data_df, location_tagged_data))
+					covidbedsbot.send_local_file("tmp_{}".format(self.state_name))
 
 		else:
-			logging.info("No data retrieved from url")
+			failure_reason = "No data retrieved from url"
+			logging.info(failure_reason)
+			covidbedsbot.send_message(self.error_msg_info(failure_reason, sheet_data_df))
+
+
+	def success_msg_info(self, sheet_data_df, location_tagged_data):
+		success_msg = u'\u2714'+ " Run successful for "+ self.state_name +"\n"
+		success_msg += u'\u2022' + " Previous record count - "+str(len(sheet_data_df)) + "\n"
+		success_msg += u'\u2022' + " Current record count - "+str(len(location_tagged_data)) +"\n"
+
+		IS_NEW_HOSPITAL_COUNT = len([x for x in location_tagged_data if x["IS_NEW_HOSPITAL"]])
+		success_msg += u'\u2022' + " Hospitals with IS_NEW_HOSPITAL true - "+str(IS_NEW_HOSPITAL_COUNT) +"\n"
+		success_msg += u'\u2022' + " Synced at - "+ location_tagged_data[0]["LAST_SYNCED"]
+		return success_msg
+
+
+	def error_msg_info(self, failure_reason, sheet_data_df):
+		error_msg = u'\u274c'+ " Run failed for "+self.state_name+"\n"
+		error_msg += u'\u2022' + " ERROR: "+ failure_reason+"\n"
+		error_msg += u'\u2022' + " No data is updated to the sheet"+"\n"
+		error_msg += u'\u2022' + " Previous record count - "+str(len(sheet_data_df)) + "\n"
+		error_msg += u'\u2022' + " The sheet was las updated at "+sheet_data_df.iloc[0]["LAST_SYNCED"]
+		return error_msg
+
+
 
 	def push_data_to_sheets(self, data_json, n=None):
 		logging.info("Posting data to Google Sheets")
