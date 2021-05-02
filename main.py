@@ -14,12 +14,15 @@ from states.notification.TelegramBot import TelegramBot
 
 covidbedsbot = TelegramBot()
 
-state_classes = [
+sim_state_classes = [
     Bengaluru,
     Haryana,
     Pune,
     Rajasthan,
-    TamilNadu,
+    TamilNadu
+]
+
+com_state_classes = [
     Chhattisgarh,
     Telangana,
     AndhraPradesh
@@ -31,8 +34,14 @@ if __name__ == '__main__':
     '''
     parser = argparse.ArgumentParser()
     parser.add_argument('--mode', help='Supported - prod or test')
+    parser.add_argument('--runtype', help='Supported - simple or complex')
 
     args, unknown = parser.parse_known_args()
+
+    if args.runtype == "complex":
+        state_classes = com_state_classes
+    else:
+        state_classes = sim_state_classes
 
     for state_class in state_classes:
         state_name = state_class.__name__

@@ -6,4 +6,4 @@ While using the docker run command specify  --shm-size 256m. Needed for some sel
 
 ## Test mode
 
-python3 main.py --mode test
+python3 main.py --mode test --runtype complex
