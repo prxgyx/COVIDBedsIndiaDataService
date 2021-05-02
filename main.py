@@ -15,14 +15,14 @@ from states.notification.TelegramBot import TelegramBot
 covidbedsbot = TelegramBot()
 
 state_classes = [
-    AndhraPradesh,
     Bengaluru,
     Haryana,
     Pune,
     Rajasthan,
     TamilNadu,
     Chhattisgarh,
-    Telangana
+    Telangana,
+    AndhraPradesh
 ]
 
 if __name__ == '__main__':
