@@ -106,10 +106,8 @@ class Haryana(State):
 		url = self.stein_url + "/" + self.main_sheet_name
 
 		logging.info("Fetching data from source")
-		# data = self.get_data_from_source()
-		import pickle
-		with open("haryana.pkl", "rb") as f:
-			data = pickle.load(f)
+		data = self.get_data_from_source()
+		
 		if len(data) > 0:
 			sheet_data_df = pd.DataFrame(self.sheet_response)
 			data = self.add_uid_lastsynced(data)
