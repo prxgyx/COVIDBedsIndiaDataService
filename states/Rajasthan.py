@@ -27,6 +27,8 @@ class Rajasthan(State):
 		self.sheet_response = requests.get(self.sheet_url).json()
 		self.number_of_records = len(self.sheet_response)
 		logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
+		self.icu_beds_column = "ICU_BEDS_TOTAL"
+		self.vent_beds_column = "VENTILATOR_BEDS_TOTAL"
 
 	def get_data_from_source(self):
 
@@ -68,9 +70,3 @@ class Rajasthan(State):
 		elif(int(now.strftime('%H')) in ([15,16,17,18,19])):
 			UpdateHour='Last Update: Today 2 PM'
 		return(UpdateHour)
-
-	def tag_critical_care(self, merged_loc_df):
-		logging.info("Tagged critical care")
-		merged_loc_df["HAS_ICU_BEDS"] = merged_loc_df.apply(lambda row: int(row["ICU_BEDS_TOTAL"]) > 0, axis=1)
-		merged_loc_df["HAS_VENTILATORS"] = merged_loc_df.apply(lambda row: int(row["VENTILATOR_BEDS_TOTAL"]) > 0, axis=1)
-		return merged_loc_df

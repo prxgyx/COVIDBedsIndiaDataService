@@ -17,7 +17,6 @@ class Bengaluru(State):
         self.main_sheet_name = "Bengaluru"
         if test_prefix:
             self.main_sheet_name = test_prefix + self.main_sheet_name
-        print(self.main_sheet_name)
         self.unique_columns = ["HOSPITAL_NAME"]
         self.old_info_columns = ["LOCATION"]
         self.sheet_url = self.stein_url + "/" + self.main_sheet_name
@@ -27,6 +26,8 @@ class Bengaluru(State):
         self.sheet_response = requests.get(self.sheet_url).json()
         self.number_of_records = len(self.sheet_response)
         logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
+        self.icu_beds_column = "ALLOCATED_BEDS_ICU"
+        self.vent_beds_column = "ALLOCATED_BEDS_VENT"
 
     def get_data_from_source(self):
         response = requests.get(self.source_url)
@@ -66,9 +67,3 @@ class Bengaluru(State):
         # output_json = json.loads(finaldf.to_json(orient="records"))
 
         return finaldf
-
-    def tag_critical_care(self, merged_loc_df):
-        logging.info("Tagged critical care")
-        merged_loc_df["HAS_ICU_BEDS"] = merged_loc_df.apply(lambda row: int(row["ALLOCATED_BEDS_ICU"]) > 0, axis=1)
-        merged_loc_df["HAS_VENTILATORS"] = merged_loc_df.apply(lambda row: int(row["ALLOCATED_BEDS_VENT"]) > 0, axis=1)
-        return merged_loc_df

@@ -22,8 +22,8 @@ class Chhattisgarh(State):
 		self.sheet_response = requests.get(self.sheet_url).json()
 		self.number_of_records = len(self.sheet_response)
 		logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
-		
-
+		self.icu_beds_column = "ICU_BEDS_TOTAL"
+		self.vent_beds_column = "VENTILATORS_TOTAL"
 
 	def get_dummy_data(self):
 		dummy_data = [
@@ -115,15 +115,3 @@ class Chhattisgarh(State):
 		browser.close()
 		browser.quit()
 		return pd.DataFrame(output_json)
-
-
-
-
-	def tag_critical_care(self, merged_loc_df):
-		merged_loc_df["HAS_ICU_BEDS"] = merged_loc_df.apply(lambda row: True 
-												if int(row["ICU_BEDS_TOTAL"]) > 0 else False, axis=1)
-
-		merged_loc_df["HAS_VENTILATORS"] = merged_loc_df.apply(lambda row: True 
-												if int(row["VENTILATORS_TOTAL"]) > 0 else False, axis=1)
-		
-		return merged_loc_df

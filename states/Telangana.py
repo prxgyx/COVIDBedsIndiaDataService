@@ -23,7 +23,6 @@ class Telangana(State):
 		self.number_of_records = len(self.sheet_response)
 		logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
 
-
 	def get_dummy_data(self):
 		dummy_data = [
 			{

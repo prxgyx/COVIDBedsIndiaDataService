@@ -24,6 +24,9 @@ class Pune(State):
 		self.number_of_records = len(self.sheet_response)
 		logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
 
+		self.icu_beds_column = "TOTAL_ICU_BEDS_WITHOUT_VENTILATOR"
+		self.vent_beds_column = "TOTAL_ICU_BEDS_WITH_VENTILATOR"
+
 	def get_data_from_source(self):
 		http = urllib3.PoolManager()
 		
@@ -61,10 +64,3 @@ class Pune(State):
 			s_no = s_no + 1
 			output_json.append(json_obj)
 		return pd.DataFrame(output_json)
-
-	def tag_critical_care(self, merged_loc_df):
-		logging.info("Tagged critical care")
-		merged_loc_df["HAS_ICU_BEDS"] = merged_loc_df.apply(lambda row: int(row["TOTAL_ICU_BEDS_WITHOUT_VENTILATOR"]) > 0, axis=1)
-		merged_loc_df["HAS_VENTILATORS"] = merged_loc_df.apply(lambda row: int(row["TOTAL_ICU_BEDS_WITH_VENTILATOR"]) > 0, axis=1)
-		return merged_loc_df
-

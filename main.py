@@ -33,7 +33,6 @@ if __name__ == '__main__':
     for state_class in state_classes:
         try:
             logging.info(f"Processing state {state_class}")
-            print(args.mode)
             if args.mode == "test":
                 state_object = state_class("Test ")
             else:
