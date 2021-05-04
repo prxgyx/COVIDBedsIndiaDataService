@@ -1,5 +1,6 @@
 import logging
 import argparse
+import time
 
 from states.AndhraPradesh import AndhraPradesh
 from states.Bengaluru import Bengaluru
@@ -56,6 +57,8 @@ if __name__ == '__main__':
             else:
                 state_object = state_class()
             state_object.push_data()
+            # Wait because throttling in requests
+            time.sleep(40)
         except Exception as e:
             logging.exception(f"Error processing state {state_name}")
             covidbedsbot.send_message(u'\u274c'+f" Error processing state {state_name}")
