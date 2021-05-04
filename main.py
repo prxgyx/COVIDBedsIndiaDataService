@@ -4,6 +4,7 @@ import argparse
 from states.AndhraPradesh import AndhraPradesh
 from states.Bengaluru import Bengaluru
 from states.Haryana import Haryana
+from states.Nashik import Nashik
 from states.Pune import Pune
 from states.Rajasthan import Rajasthan
 from states.TamilNadu import TamilNadu
@@ -21,6 +22,7 @@ sim_state_classes = [
     Pune,
     Rajasthan,
     TamilNadu,
+    Nashik,
     Uttarakhand
 ]
 
