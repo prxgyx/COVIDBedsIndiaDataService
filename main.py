@@ -60,8 +60,8 @@ if __name__ == '__main__':
             # Wait because throttling in requests
             time.sleep(40)
         except Exception as e:
-            logging.exception(f"Error processing state {state_name}")
-            covidbedsbot.send_message(u'\u274c'+f" Error processing state {state_name}")
+            logging.exception(f"Error processing state {state_name} - {str(e)}")
+            covidbedsbot.send_message(u'\u274c'+f" Error processing state {state_name} - {str(e)}")
 
 
     logging.info("Done.")
