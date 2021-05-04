@@ -12,6 +12,7 @@ from states.TamilNadu import TamilNadu
 from states.Telangana import Telangana
 from states.Chhattisgarh import Chhattisgarh
 from states.Uttarakhand import Uttarakhand
+from states.Gandhinagar import Gandhinagar
 
 from states.notification.TelegramBot import TelegramBot
 
@@ -19,11 +20,12 @@ covidbedsbot = TelegramBot()
 
 sim_state_classes = [
     Bengaluru,
+    Gandhinagar,
     Haryana,
+    Nashik,
     Pune,
     Rajasthan,
     TamilNadu,
-    Nashik,
     Uttarakhand
 ]
 
