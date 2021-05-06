@@ -51,11 +51,11 @@ class Rajasthan(State):
 		storeMatrix.columns=['sno','DISTRICT','HOSPITAL_NAME','GENERAL_BEDS_TOTAL','GENERAL_BEDS_OCCUPIED','GENERAL_BEDS_AVAILABLE',
 							 'OXYGEN_BEDS_TOTAL','OXYGEN_BEDS_OCCUPIED','OXYGEN_BEDS_AVAILABLE','ICU_BEDS_TOTAL','ICU_BEDS_OCCUPIED',
 							 'ICU_BEDS_AVAILABLE','VENTILATOR_BEDS_TOTAL','VENTILATOR_BEDS_OCCUPIED','VENTILATOR_BEDS_AVAILABLE',
-							 'HOSPITAL_HELPLINE_NO','DISTRICT_CONTROL_ROOM']
+							 'HOSPITAL_HELPLINE_NO','DISTRICT_CONTROL_ROOM', 'LAST_UPDATED']
 
 		storeMatrix=storeMatrix.drop(0,axis=0)
 		storeMatrix=storeMatrix.drop('sno',axis=1)
-		storeMatrix['LAST_UPDATED']=self.lastupdate()
+		# storeMatrix['LAST_UPDATED']=self.lastupdate()
 		
 		return storeMatrix
 
