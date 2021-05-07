@@ -9,7 +9,7 @@ class TamilNadu(State):
 
 	def __init__(self, test_prefix=None):
 		super().__init__()
-		self.stein_url = "https://stein.hamaar.cloud/v1/storages/608970d903eef3cbe0d05a6b"
+		self.stein_url = "https://stein.hamaar.cloud/v1/storages/6089820e03eef3b588d05a6d"
 		self.source_url = "https://stopcorona.tn.gov.in/beds.php"
 		self.main_sheet_name = "Tamil Nadu"
 		if test_prefix:
