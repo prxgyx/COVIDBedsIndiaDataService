@@ -37,21 +37,27 @@ class State(object):
 
 
 	def get_location_from_master(self, govt_data_df, sheet_data_df):
+		unique_columns_lower = []
 		for unique_column in self.unique_columns:
 			sheet_data_df[unique_column] = sheet_data_df[unique_column].str.strip()
 			govt_data_df[unique_column] = govt_data_df[unique_column].str.strip()
+			sheet_data_df[unique_column+"_lower"] = sheet_data_df[unique_column].str.lower()
+			govt_data_df[unique_column+"_lower"] = govt_data_df[unique_column].str.lower()
+			unique_columns_lower.append(unique_column+"_lower")
 
-		sheet_data_df_subset = sheet_data_df[self.unique_columns + self.old_info_columns + ["UID", "IS_NEW_HOSPITAL"]]
+
+		sheet_data_df_subset = sheet_data_df[unique_columns_lower+ self.old_info_columns + ["UID", "IS_NEW_HOSPITAL"]]
 
 		bool_values = {"TRUE":True, "FALSE": False}
 		sheet_data_df_subset["IS_NEW_HOSPITAL"] = sheet_data_df_subset["IS_NEW_HOSPITAL"].map(bool_values)
 
 		merged_loc_df = pd.merge(govt_data_df, sheet_data_df_subset, 
-									on=self.unique_columns, how="left")
+									on=unique_columns_lower, how="left")
 		merged_loc_df["IS_NEW_HOSPITAL"] = merged_loc_df["IS_NEW_HOSPITAL"].fillna(value=True)
 
 		merged_loc_df = self.tag_critical_care(merged_loc_df)
 		merged_loc_df = merged_loc_df.fillna('')
+		merged_loc_df = merged_loc_df.drop(unique_columns_lower, axis=1)
 		merged_loc_df["STEIN_ID"] = self.state_name
 		merged_loc_df = merged_loc_df.drop_duplicates()
 
