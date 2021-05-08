@@ -8,6 +8,7 @@ from states.Haryana import Haryana
 from states.Nashik import Nashik
 from states.Pune import Pune
 from states.Rajasthan import Rajasthan
+from states.Surat import Surat
 from states.TamilNadu import TamilNadu
 from states.Telangana import Telangana
 from states.Chhattisgarh import Chhattisgarh
@@ -25,6 +26,7 @@ sim_state_classes = [
     Nashik,
     Pune,
     Rajasthan,
+    Surat,
     TamilNadu,
     Uttarakhand
 ]
