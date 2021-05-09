@@ -73,7 +73,7 @@ class Haryana(State):
 			finaldata=pd.concat([finaldata,deets],axis=0)
 
 		locationsplit=finaldata.location.str.split(',', expand = True)
-		locationsplit.columns=['col1','col2','col3','col4','col5']
+		locationsplit.columns=['col1','col2','col3','col4','col5', 'col6']
 
 		locationsplit['LAT'] = locationsplit['col1'].astype(str).str.strip('showLocation(')
 		locationsplit['LAT'] = locationsplit['LAT'].replace("\'", "", regex=True)
