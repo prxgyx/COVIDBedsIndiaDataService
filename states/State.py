@@ -59,7 +59,7 @@ class State(object):
 		merged_loc_df = merged_loc_df.fillna('')
 		merged_loc_df = merged_loc_df.drop(unique_columns_lower, axis=1)
 		merged_loc_df["STEIN_ID"] = self.state_name
-		merged_loc_df = merged_loc_df.drop_duplicates()
+		merged_loc_df = merged_loc_df.drop_duplicates(self.unique_columns)
 
 		merged_loc_df = self.get_uid_lastsynced(merged_loc_df)	
 		return merged_loc_df.to_dict('records')
