@@ -5,6 +5,7 @@ import time
 from states.AndhraPradesh import AndhraPradesh
 from states.Bengaluru import Bengaluru
 from states.Haryana import Haryana
+from states.Nagpur import Nagpur
 from states.Nashik import Nashik
 from states.Pune import Pune
 from states.Rajasthan import Rajasthan
@@ -24,6 +25,7 @@ sim_state_classes = [
     Gandhinagar,
     Haryana,
     Nashik,
+    Nagpur,
     Pune,
     Rajasthan,
     Surat,
