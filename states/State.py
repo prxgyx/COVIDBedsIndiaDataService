@@ -21,19 +21,12 @@ class State(object):
 		# To delete all records
 		self.delete_condition = {"condition": {}, "limit": 50}
 
-	# def __new__(cls, state_name):
-	# 	if(state_name == "TamilNadu"):
-	# 		return super().__new__(TamilNadu)
-	# 	else:
-	# 		raise Exception("State {} not supported".format(state_name))
-
 	def get_uid_lastsynced(self, merged_loc_df):
 		merged_loc_df["UID"] = merged_loc_df.apply(lambda row: row["UID"] if (isinstance(row["UID"], str) and 
 													row["UID"]!="") else str(uuid.uuid4()), axis=1)
 		merged_loc_df["LAST_SYNCED"] = pd.to_datetime('now').replace(microsecond=0) + pd.Timedelta('05:30:00')
 		merged_loc_df["LAST_SYNCED"] = merged_loc_df["LAST_SYNCED"].astype(str)
 		return merged_loc_df
-
 
 
 	def get_location_from_master(self, govt_data_df, sheet_data_df):
@@ -88,12 +81,13 @@ class State(object):
 
 				delete_data_response = self.delete_data_from_sheets()
 
-				if not "error" in delete_data_response:
+				# Successful delete
+				if "clearedRowsCount" in delete_data_response:
 					self.push_data_to_sheets(location_tagged_data, 50)
 					covidbedsbot.send_message(self.success_msg_info(sheet_data_df, location_tagged_data))
 					covidbedsbot.send_local_file("tmp_{}".format(self.state_name))
 				else:
-					failure_reason = "Error deleting data from sheets"
+					failure_reason = "Error deleting data from sheets - {}".format(delete_data_response)
 					covidbedsbot.send_message(self.error_msg_info(failure_reason, sheet_data_df))
 
 		else:
@@ -147,10 +141,13 @@ class State(object):
 		logging.info("Deleting data from {}".format(self.sheet_url))
 
 		number_of_loops = int(self.number_of_records / 50) + 1
+		self.delete_condition["condition"] = {"STEIN_ID": self.state_name}
+
 		for i in range(0, number_of_loops):
-			self.delete_condition["condition"] = {"STEIN_ID": self.state_name}
 			response = requests.delete(self.sheet_url, data=json.dumps(self.delete_condition)).json()
 			logging.info(response)
+			if "clearedRowsCount" not in response:
+				return response
 		return response
 
 	def write_temp_file(self, data_df):
