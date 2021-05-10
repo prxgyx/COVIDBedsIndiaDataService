@@ -14,7 +14,8 @@ class Surat(State):
         self.main_sheet_name = "Surat"
         if test_prefix:
             self.main_sheet_name = test_prefix + self.main_sheet_name
-        self.old_info_columns = ["LOCATION"]
+        self.unique_columns = ["HOSPITAL_NAME"]
+        self.old_info_columns = ["LOCATION","LAT","LONG"]
         self.sheet_url = self.stein_url + "/" + self.main_sheet_name
         # Fetching it here because need number of records in the Class
         # need number of records because bulk delete API throws error entity too large
@@ -51,7 +52,6 @@ class Surat(State):
                 "SNO": s_no + 1,
                 "HOSPITAL_NAME": str(hospital_name or ""),
                 "HOSPITAL_ADDRESS": str(hospital_address or ""),
-                "DISTRICT": "",
                 "HOSPITAL_NUMBER": str(hospital_number or ""),
                 "HOSPITAL_TYPE": str(hospital_type or ""),
                 "LAST_UPDATED": str(last_updated or ""),
