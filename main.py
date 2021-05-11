@@ -25,7 +25,6 @@ sim_state_classes = [
     Gandhinagar,
     Haryana,
     Nashik,
-    Nagpur,
     Pune,
     Rajasthan,
     Surat,
@@ -35,6 +34,7 @@ sim_state_classes = [
 
 com_state_classes = [
     Chhattisgarh,
+    Nagpur,
     Telangana,
     AndhraPradesh
 ]
