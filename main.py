@@ -13,6 +13,7 @@ from states.Surat import Surat
 from states.TamilNadu import TamilNadu
 from states.Telangana import Telangana
 from states.Chhattisgarh import Chhattisgarh
+from states.Thane import Thane
 from states.Uttarakhand import Uttarakhand
 from states.Gandhinagar import Gandhinagar
 from states.WestBengal import WestBengal
@@ -29,6 +30,7 @@ sim_state_classes = [
     Pune,
     Surat,
     TamilNadu,
+    Thane,
     Uttarakhand
 ]
 
