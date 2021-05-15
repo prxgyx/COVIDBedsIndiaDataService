@@ -26,17 +26,18 @@ sim_state_classes = [
     Haryana,
     Nashik,
     Pune,
-    Rajasthan,
     Surat,
     TamilNadu,
     Uttarakhand
 ]
 
 com_state_classes = [
+    AndhraPradesh,
     Chhattisgarh,
     Nagpur,
+    Rajasthan,
     Telangana,
-    AndhraPradesh
+    WestBengal
 ]
 
 if __name__ == '__main__':
