@@ -15,6 +15,7 @@ from states.Telangana import Telangana
 from states.Chhattisgarh import Chhattisgarh
 from states.Uttarakhand import Uttarakhand
 from states.Gandhinagar import Gandhinagar
+from states.WestBengal import WestBengal
 
 from states.notification.TelegramBot import TelegramBot
 
