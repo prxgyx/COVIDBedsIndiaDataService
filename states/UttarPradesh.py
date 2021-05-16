@@ -50,7 +50,6 @@ class UttarPradesh(State):
 
 		while len(all_districts_list)>0:
 			try:
-				print(len(all_districts_list), all_districts_list)
 				i = all_districts_list.pop(0)
 				if i in retry_counter:
 					retry_counter[i]+=1
@@ -89,7 +88,6 @@ class UttarPradesh(State):
 						json_hosp["CONTACT"] = span_elements[1].text
 					else:
 						json_hosp["CONTACT"]= span_elements[0].text
-					print(json_hosp)
 					output_json.append(json_hosp)
 			except Exception as e:
 				print(e)
@@ -98,7 +96,6 @@ class UttarPradesh(State):
 
 				time.sleep(10)
 
-		pd.DataFrame(output_json).to_csv("UttarPradesh.csv", index=False)
 		return pd.DataFrame(output_json)
 
 
