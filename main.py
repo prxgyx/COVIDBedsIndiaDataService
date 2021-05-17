@@ -17,6 +17,8 @@ from states.Thane import Thane
 from states.Uttarakhand import Uttarakhand
 from states.Gandhinagar import Gandhinagar
 from states.WestBengal import WestBengal
+from states.UttarPradesh import UttarPradesh
+
 
 from states.notification.TelegramBot import TelegramBot
 
@@ -40,7 +42,8 @@ com_state_classes = [
     Nagpur,
     Rajasthan,
     Telangana,
-    WestBengal
+    WestBengal,
+    UttarPradesh
 ]
 
 if __name__ == '__main__':
