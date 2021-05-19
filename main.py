@@ -4,6 +4,9 @@ import time
 
 from states.AndhraPradesh import AndhraPradesh
 from states.Bengaluru import Bengaluru
+from states.Chhattisgarh import Chhattisgarh
+from states.Gandhinagar import Gandhinagar
+from states.Goa import Goa
 from states.Haryana import Haryana
 from states.Nagpur import Nagpur
 from states.Nashik import Nashik
@@ -12,13 +15,10 @@ from states.Rajasthan import Rajasthan
 from states.Surat import Surat
 from states.TamilNadu import TamilNadu
 from states.Telangana import Telangana
-from states.Chhattisgarh import Chhattisgarh
 from states.Thane import Thane
 from states.Uttarakhand import Uttarakhand
-from states.Gandhinagar import Gandhinagar
-from states.WestBengal import WestBengal
 from states.UttarPradesh import UttarPradesh
-
+from states.WestBengal import WestBengal
 
 from states.notification.TelegramBot import TelegramBot
 
@@ -27,6 +27,7 @@ covidbedsbot = TelegramBot()
 sim_state_classes = [
     Bengaluru,
     Gandhinagar,
+    Goa,
     Haryana,
     Nashik,
     Pune,
