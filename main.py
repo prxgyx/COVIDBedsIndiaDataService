@@ -27,7 +27,6 @@ covidbedsbot = TelegramBot()
 
 sim_state_classes = [
     Bengaluru,
-    Bihar,
     Gandhinagar,
     Goa,
     Haryana,
@@ -41,6 +40,7 @@ sim_state_classes = [
 
 com_state_classes = [
     AndhraPradesh,
+    Bihar,
     Chhattisgarh,
     Nagpur,
     Rajasthan,
