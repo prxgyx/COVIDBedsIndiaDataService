@@ -63,6 +63,8 @@ class Bihar(FreshState):
 			browser.find_elements_by_xpath("//a[@data-dt-idx='{}']".format(page_num))[0].click()
 			time.sleep(5)
 			self.get_row_list_from_single_page(browser, json_list)
+		
+		# self.get_row_list_from_single_page(browser, json_list)
 
 		json_df = pd.DataFrame(json_list)
 		df = self.join_master_df(json_df)

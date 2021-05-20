@@ -21,7 +21,7 @@ class FreshState(State):
 
 			self.write_temp_file(sheet_data_df)
 			delete_data_response = self.delete_data_from_sheets()
-			if not "error" in delete_data_response:
+			if "clearedRowsCount" in delete_data_response:
 				self.push_data_to_sheets(data, 50)
 				covidbedsbot.send_message(self.success_msg_info(sheet_data_df, data))
 				covidbedsbot.send_local_file("tmp_{}".format(self.state_name))
@@ -59,3 +59,9 @@ class FreshState(State):
 		merged_df = merged_df.drop(['LAT_x', 'LAT_y', 'LONG_x', 'LONG_y'], axis=1)
 
 		return merged_df
+
+	def success_msg_info(self, sheet_data_df, location_tagged_data):
+		msg_info = super().success_msg_info(sheet_data_df, location_tagged_data)
+		invalid_lat_long_count = len([x for x in location_tagged_data if x["LAT"] == "0"])
+		msg_info += "\n" + u'\u2022' + " Count of facilities with invalid location - "+ str(invalid_lat_long_count)
+		return msg_info
