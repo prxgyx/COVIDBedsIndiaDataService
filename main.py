@@ -4,6 +4,7 @@ import time
 
 from states.AndhraPradesh import AndhraPradesh
 from states.Bengaluru import Bengaluru
+from states.Bihar import Bihar
 from states.Chhattisgarh import Chhattisgarh
 from states.Gandhinagar import Gandhinagar
 from states.Goa import Goa
@@ -26,6 +27,7 @@ covidbedsbot = TelegramBot()
 
 sim_state_classes = [
     Bengaluru,
+    Bihar,
     Gandhinagar,
     Goa,
     Haryana,
