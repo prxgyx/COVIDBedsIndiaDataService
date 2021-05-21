@@ -30,6 +30,7 @@ class Bihar(FreshState):
 		self.sheet_response = requests.get(self.sheet_url).json()
 		self.number_of_records = len(self.sheet_response)
 		logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
+		self.unique_columns = ['DISTRICT', 'FACILITY_NAME']
 
 	def get_data_from_source(self):
 

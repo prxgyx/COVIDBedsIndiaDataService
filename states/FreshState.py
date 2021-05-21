@@ -51,7 +51,7 @@ class FreshState(State):
 	def join_master_df(self, df):
 		logging.info("Joining master sheet DF")
 		master_df = self.get_master_sheet_df()
-		unique_columns_lower = ['DISTRICT', 'FACILITY_NAME']
+		unique_columns_lower = self.unique_columns
 
 		merged_df = pd.merge(df, master_df, on=unique_columns_lower, how="left")
 		merged_df['LAT'] = merged_df['LAT_y'].fillna(merged_df['LAT_x'])

@@ -9,7 +9,7 @@ import json
 import logging
 import uuid
 import datetime
-
+import re
 
 class Haryana(FreshState):
 
@@ -28,6 +28,7 @@ class Haryana(FreshState):
 		self.sheet_response = requests.get(self.sheet_url).json()
 		self.number_of_records = len(self.sheet_response)
 		logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
+		self.unique_columns = ["FACILITY_NAME", "CITY"]
 
 	def get_data_from_source(self):
 		finaldata=pd.DataFrame()
@@ -79,13 +80,41 @@ class Haryana(FreshState):
 		finaldata=pd.concat([finaldata[['HOSPITAL_INFO','LAST_UPDATED','CITY']],locationsplit[['LAT','LONG']]],axis=1)
 
 		finaldata["STEIN_ID"] = self.state_name
-		
-		output_json = json.loads(finaldata.to_json(orient="records"))
+
+		finaldata["attr_list"] = finaldata.apply(lambda row: self.split_hsp_info_into_att_list(row.HOSPITAL_INFO), axis=1)
+
+		attr_key_value = {"FACILITY_NAME": "Facility Name"}
+		# "AVAILABILITY_OF_BEDS": "Availability of Beds", 
+		# "OXYGEN_BEDS": " Oxygen Beds", 
+		# "NON-OXYGEN_BEDS": "Non-Oxygen Beds", 
+		# "ICU_BEDS": "ICU Beds", 
+		# "VENTILATORS": "Ventilators", 
+		# "AVAILABILITY_OF_OXYGEN": "Availability of Oxygen"}
+
+		for (col,col_name) in attr_key_value.items():
+			finaldata[col] = finaldata.apply(lambda row: self.get_attr_value(row.attr_list, col_name), axis=1)
+
+		df = self.join_master_df(finaldata)
+
+		output_json = json.loads(df.to_json(orient="records"))
 
 		return output_json
 
-		# with open('data.txt', 'w') as outfile:
-		# 	json.dump(output_json, outfile)
+
+	def split_hsp_info_into_att_list(self, hsp_info):
+		return re.split(', |\n', hsp_info)
+
+	def get_attr_value(self, attr_list, attr):
+		subset_list = [x for x in attr_list if attr in x]
+		length_subset = len(subset_list)
+		if length_subset > 1:
+			raise Exception("Error for attribute {} in {}".format(attr, attr_list))
+		if length_subset == 0:
+			return ""
+		else:
+			attr_info = subset_list[0]
+			attr_value = attr_info.replace(attr, "").replace(",", "").replace(":", "").strip()
+			return attr_value
 
 	def get_key(self, val):
 		for key, value in self.distL.items():
