@@ -27,6 +27,7 @@ covidbedsbot = TelegramBot()
 
 sim_state_classes = [
     Bengaluru,
+    Bihar,
     Gandhinagar,
     Goa,
     Haryana,
@@ -35,18 +36,17 @@ sim_state_classes = [
     Surat,
     TamilNadu,
     Thane,
-    Uttarakhand
+    Uttarakhand,
+    UttarPradesh
 ]
 
 com_state_classes = [
     AndhraPradesh,
-    Bihar,
     Chhattisgarh,
     Nagpur,
     Rajasthan,
     Telangana,
-    WestBengal,
-    UttarPradesh
+    WestBengal
 ]
 
 if __name__ == '__main__':
