@@ -33,6 +33,7 @@ sim_state_classes = [
     Haryana,
     Nashik,
     Pune,
+    Rajasthan,
     Surat,
     TamilNadu,
     Thane,
@@ -44,7 +45,6 @@ com_state_classes = [
     AndhraPradesh,
     Chhattisgarh,
     Nagpur,
-    Rajasthan,
     Telangana,
     WestBengal
 ]
