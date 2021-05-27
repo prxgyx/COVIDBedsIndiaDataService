@@ -11,14 +11,14 @@ from states.State import State
 class Ahmedabad(State):
     def __init__(self, test_prefix=None):
         super().__init__()
-        self.stein_url = ""
+        self.stein_url = "https://stein.hamaar.cloud/v1/storages/608982c803eef3543bd05a70"
         self.source_url = "https://ahmedabadcity.gov.in/portal/web?requestType=ApplicationRH&actionVal=loadCoronaRelatedDtls&queryType=Select&screenId=114"
         self.state_name = "Ahmedabad"
         self.main_sheet_name = "Ahmedabad"
         if test_prefix:
             self.main_sheet_name = test_prefix + self.main_sheet_name
         self.unique_columns = ["HOSPITAL_NAME"]
-        self.old_info_columns = ["LOCATION", "LAT", "LONG"]
+        self.old_info_columns = ["LOCATION"]
         self.sheet_url = self.stein_url + "/" + self.main_sheet_name
         # Fetching it here because need number of records in the Class
         # need number of records because bulk delete API throws error entity too large
