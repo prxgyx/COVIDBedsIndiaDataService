@@ -10,29 +10,9 @@ covidbedsbot = TelegramBot()
 
 class FreshState(State):
 
-	def push_data(self):
-
-		logging.info("Fetching data from source")
-		data = self.get_data_from_source()
-		
-		if len(data) > 0:
-			sheet_data_df = pd.DataFrame(self.sheet_response)
-			data = self.add_uid_lastsynced(data)
-
-			self.write_temp_file(sheet_data_df)
-			delete_data_response = self.delete_data_from_sheets()
-			if "clearedRowsCount" in delete_data_response:
-				self.push_data_to_sheets(data, 50)
-				covidbedsbot.send_message(self.success_msg_info(sheet_data_df, data))
-				covidbedsbot.send_local_file("tmp_{}".format(self.state_name))
-
-			else:
-				failure_reason = "Error deleting data from sheets"
-				covidbedsbot.send_message(self.error_msg_info(failure_reason, sheet_data_df))
-		else:
-			failure_reason = "No data retrieved from url"
-			logging.info(failure_reason)
-			covidbedsbot.send_message(self.error_msg_info(failure_reason, sheet_data_df))
+	def __init__(self, test_prefix=None):
+		super().__init__()
+		self.is_fresh = True
 
 	def add_uid_lastsynced(self, data):
 		now  = datetime.datetime.now()

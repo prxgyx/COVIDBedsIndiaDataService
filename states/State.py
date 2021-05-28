@@ -20,6 +20,7 @@ class State(object):
 		self.old_info_columns = ["LOCATION", "LAT", "LONG"]
 		# To delete all records
 		self.delete_condition = {"condition": {}, "limit": 50}
+		self.is_fresh = False
 
 	def get_uid_lastsynced(self, merged_loc_df):
 		merged_loc_df["UID"] = merged_loc_df.apply(lambda row: row["UID"] if (isinstance(row["UID"], str) and 
@@ -64,15 +65,21 @@ class State(object):
 
 		logging.info("Fetching data from source")
 		govt_data_df = self.get_data_from_source()
-		sheet_data_df = pd.DataFrame(self.sheet_response)
 
-		if len(govt_data_df) > 0:
+		self.inner_push_data(govt_data_df)
+
+	def inner_push_data(self, govt_data):
+		sheet_data_df = pd.DataFrame(self.sheet_response)
+		if len(govt_data) > 0:
 			self.get_error_message(self.sheet_response)
 
-			logging.info("Fetching location from master sheet")
-			location_tagged_data = self.get_location_from_master(govt_data_df, sheet_data_df)
+			if self.is_fresh:
+				location_uid_synced_data = self.add_uid_lastsynced(govt_data)
+			else:
+				logging.info("Fetching location from master sheet")
+				location_uid_synced_data = self.get_location_from_master(govt_data, sheet_data_df)
 
-			if len(sheet_data_df)*.9 > len(location_tagged_data):
+			if len(sheet_data_df)*.9 > len(location_uid_synced_data):
 				failure_reason = "Row count with the scraped data is low, can cause data loss, Omitting writing to main file"
 				logging.info(failure_reason)
 				covidbedsbot.send_message(self.error_msg_info(failure_reason, sheet_data_df))
@@ -83,8 +90,8 @@ class State(object):
 
 				# Successful delete
 				if "clearedRowsCount" in delete_data_response:
-					self.push_data_to_sheets(location_tagged_data, 50)
-					covidbedsbot.send_message(self.success_msg_info(sheet_data_df, location_tagged_data))
+					self.push_data_to_sheets(location_uid_synced_data, 50)
+					covidbedsbot.send_message(self.success_msg_info(sheet_data_df, location_uid_synced_data))
 					covidbedsbot.send_local_file("tmp_{}".format(self.state_name))
 				else:
 					failure_reason = "Error deleting data from sheets - {}".format(delete_data_response)
