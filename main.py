@@ -26,7 +26,6 @@ from states.notification.TelegramBot import TelegramBot
 covidbedsbot = TelegramBot()
 
 sim_state_classes = [
-    Bihar,
     Gandhinagar,
     Goa,
     Haryana,
@@ -41,8 +40,9 @@ sim_state_classes = [
 ]
 
 com_state_classes = [
-   Bengaluru,
     AndhraPradesh,
+    Bengaluru,
+    Bihar,
     Chhattisgarh,
     Nagpur,
     Telangana,
