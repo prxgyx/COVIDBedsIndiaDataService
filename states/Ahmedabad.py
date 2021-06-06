@@ -26,8 +26,8 @@ class Ahmedabad(State):
         self.sheet_response = requests.get(self.sheet_url).json()
         self.number_of_records = len(self.sheet_response)
         logging.info("Fetched {} records from Google Sheets".format(self.number_of_records))
-        self.icu_beds_column = "ICU_BEDS_WITHOUT_VENTILATOR"
-        self.vent_beds_column = "ICU_BEDS_WITH_VENTILATOR"
+        self.icu_beds_column = "ICU_BEDS_WITHOUT_VENTILATOR_AVAILABLE"
+        self.vent_beds_column = "ICU_BEDS_WITH_VENTILATOR_AVAILABLE"
 
     def get_data_from_source(self):
         output_json = []
@@ -62,10 +62,10 @@ class Ahmedabad(State):
                 "HOSPITAL_NAME": str(hospital_name or ""),
                 "HOSPITAL_ZONE": str(hospital_zone or ""),
                 "TOTAL_OCCUPIED_BEDS": str(total_occupied_beds or ""),
-                "ISOLATION_BEDS": str(isolation_beds or "0"),
-                "TOTAL_BEDS_WITH_OXYGEN": str(total_beds_with_oxygen or "0"),
-                "ICU_BEDS_WITHOUT_VENTILATOR": str(icu_beds_without_ventilator or "0"),
-                "ICU_BEDS_WITH_VENTILATOR": str(icu_with_ventilator or "0"),
+                "ISOLATION_BEDS_AVAILABLE": str(isolation_beds or "0"),
+                "BEDS_WITH_OXYGEN_AVAILABLE": str(total_beds_with_oxygen or "0"),
+                "ICU_BEDS_WITHOUT_VENTILATOR_AVAILABLE": str(icu_beds_without_ventilator or "0"),
+                "ICU_BEDS_WITH_VENTILATOR_AVAILABLE": str(icu_with_ventilator or "0"),
                 "NODAL_OFFICER_NAME": str(nodal_officer_name or "0"),
                 "NODAL_OFFICER_NUMBER": str(nodal_officer_number or "0"),
                 "LAST_UPDATED": str(last_updated or "0"),
