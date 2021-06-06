@@ -78,10 +78,13 @@ class State(object):
 			else:
 				logging.info("Fetching location from master sheet")
 				location_uid_synced_data = self.get_location_from_master(govt_data, sheet_data_df)
+				new_df_len = len(location_uid_synced_data)
 
-			if len(sheet_data_df)*.9 > len(location_uid_synced_data):
-				failure_reason = "Row count with the scraped data is low, can cause data loss, Omitting writing to main file"
+			if len(sheet_data_df)*.9 > new_df_len:
+
+				failure_reason = "Row count with the scraped data is low ({}), can cause data loss, Omitting writing to main file".format(new_df_len)
 				logging.info(failure_reason)
+				self.error_msg_info(failure_reason, sheet_data_df)
 				covidbedsbot.send_message(self.error_msg_info(failure_reason, sheet_data_df))
 			else:
 				self.write_temp_file(sheet_data_df)
