@@ -40,7 +40,7 @@ class Bengaluru(State):
 
     def get_data_from_source(self):
         fireFoxOptions = webdriver.FirefoxOptions()
-        # fireFoxOptions.set_headless()
+        fireFoxOptions.set_headless()
         browser = webdriver.Firefox(firefox_options=fireFoxOptions)
 
         browser.get(self.source_url)
