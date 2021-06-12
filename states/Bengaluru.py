@@ -22,7 +22,7 @@ class Bengaluru(State):
         super().__init__()
         self.state_name = "Bengaluru"
         self.stein_url = "https://stein.hamaar.cloud/v1/storages/608982f703eef3de2bd05a72"
-        self.source_url = "https://apps.bbmpgov.in/covid19/"
+        self.source_url = "https://apps.bbmpgov.in/Covid19/en/bedstatus.php"
         self.main_sheet_name = "Bengaluru"
         if test_prefix:
             self.main_sheet_name = test_prefix + self.main_sheet_name
@@ -40,7 +40,7 @@ class Bengaluru(State):
 
     def get_data_from_source(self):
         fireFoxOptions = webdriver.FirefoxOptions()
-        fireFoxOptions.set_headless()
+        # fireFoxOptions.set_headless()
         browser = webdriver.Firefox(firefox_options=fireFoxOptions)
 
         browser.get(self.source_url)
