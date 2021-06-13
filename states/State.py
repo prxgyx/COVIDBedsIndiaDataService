@@ -78,7 +78,8 @@ class State(object):
 			else:
 				logging.info("Fetching location from master sheet")
 				location_uid_synced_data = self.get_location_from_master(govt_data, sheet_data_df)
-				new_df_len = len(location_uid_synced_data)
+				
+			new_df_len = len(location_uid_synced_data)
 
 			if len(sheet_data_df)*.9 > new_df_len:
 
