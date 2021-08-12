@@ -81,7 +81,7 @@ class State(object):
 				
 			new_df_len = len(location_uid_synced_data)
 
-			if len(sheet_data_df)*.5 > new_df_len:
+			if len(sheet_data_df)*.9 > new_df_len:
 
 				failure_reason = "Row count with the scraped data is low ({}), can cause data loss, Omitting writing to main file".format(new_df_len)
 				logging.info(failure_reason)
