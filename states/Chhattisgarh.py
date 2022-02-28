@@ -10,11 +10,10 @@ import logging
 class Chhattisgarh(State):
 
 	def __init__(self, test_prefix=None):
+		self.main_sheet_name = "Chhattisgarh"
 		super().__init__()
 		self.state_name = "Chhattisgarh"
-		self.stein_url = "https://stein.hamaar.cloud/v1/storages/6089833203eef38338d05a73"
 		self.source_url = "https://cg.nic.in/health/covid19/RTPBedAvailable.aspx"
-		self.main_sheet_name = "Chhattisgarh"
 		if test_prefix:
 			self.main_sheet_name = test_prefix + self.main_sheet_name
 		self.sheet_url = self.stein_url + "/" + self.main_sheet_name

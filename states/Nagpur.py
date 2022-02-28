@@ -8,10 +8,9 @@ import json
 
 class Nagpur(State):
     def __init__(self, test_prefix=None):
-        super().__init__()
-        self.stein_url = "https://stein.hamaar.cloud/v1/storages/608983e003eef32328d05a76"
-        self.source_url = "http://nsscdcl.org/covidbeds/AvailableHospitalsNew.jsp"
         self.state_name = "Nagpur"
+        super().__init__()
+        self.source_url = "http://nsscdcl.org/covidbeds/AvailableHospitalsNew.jsp"
         self.main_sheet_name = "Nagpur"
         if test_prefix:
             self.main_sheet_name = test_prefix + self.main_sheet_name

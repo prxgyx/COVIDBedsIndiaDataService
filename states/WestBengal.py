@@ -17,13 +17,12 @@ import numpy as np
 class WestBengal(State):
 
 	def __init__(self, test_prefix=None):
+		self.state_name = "West Bengal"
 		super().__init__()
-		self.stein_url = "https://stein.hamaar.cloud/v1/storages/608983fc03eef384cad05a78"
 		self.source_url = "https://excise.wb.gov.in/CHMS/Public/Page/CHMS_Public_Hospital_Bed_Availability.aspx"
 		self.main_sheet_name = "West Bengal"
 		if test_prefix:
 			self.main_sheet_name = test_prefix + self.main_sheet_name
-		self.state_name = "West Bengal"
 		self.sheet_url = self.stein_url + "/" + self.main_sheet_name
 		# Fetching it here because need number of records in the Class
 		# need number of records because bulk delete API throws error entity too large

@@ -10,9 +10,8 @@ import logging
 class Telangana(State):
 
 	def __init__(self, test_prefix=None):
-		super().__init__()
 		self.state_name = "Telangana"
-		self.stein_url = "https://stein.hamaar.cloud/v1/storages/6089829403eef36d93d05a6f"
+		super().__init__()
 		self.source_url = "http://164.100.112.24/SpringMVC/Hospital_Beds_Statistic_Bulletin_citizen.htm"
 		self.main_sheet_name = "Telangana"
 		if test_prefix:

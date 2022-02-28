@@ -9,10 +9,9 @@ import json
 
 class Thane(State):
     def __init__(self, test_prefix=None):
-        super().__init__()
-        self.stein_url = "https://stein.hamaar.cloud/v1/storages/609fc78ae75f9c111f96eb34"
-        self.source_url = "https://covidbedthane.in/HospitalInfo/showindex"
         self.state_name = "Thane"
+        super().__init__()
+        self.source_url = "https://covidbedthane.in/HospitalInfo/showindex"
         self.main_sheet_name = "Thane"
         if test_prefix:
             self.main_sheet_name = test_prefix + self.main_sheet_name

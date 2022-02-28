@@ -77,11 +77,11 @@ class AndhraPradesh(State):
     ]
 
     def __init__(self, test_prefix=None, *args, **kwargs):
+        self.state_name = "AndhraPradesh"
         super().__init__()
         self.main_sheet_name = "Andhra Pradesh"
         if test_prefix:
             self.main_sheet_name = test_prefix + self.main_sheet_name
-        self.state_name = "AndhraPradesh"
         self.sheet_url = self.stein_url + "/" + self.main_sheet_name
         logging.info("Fetching data from Google Sheets")
         self.sheet_response = requests.get(self.sheet_url).json()

@@ -8,6 +8,7 @@ import sys
 import os
 import datetime
 from states.notification.TelegramBot import TelegramBot
+import os
 
 
 logging.basicConfig(filename='DataService.log', filemode='a', format='%(asctime)-15s %(message)s', level=logging.DEBUG)
@@ -21,6 +22,8 @@ class State(object):
 		# To delete all records
 		self.delete_condition = {"condition": {}, "limit": 50}
 		self.is_fresh = False
+		self.stein_url_id = os.environ[self.state_name]
+		self.stein_url = "https://stein.hamaar.cloud/v1/storages/{}".format(self.stein_url_id)
 
 	def get_uid_lastsynced(self, merged_loc_df):
 		merged_loc_df["UID"] = merged_loc_df.apply(lambda row: row["UID"] if (isinstance(row["UID"], str) and 

@@ -9,9 +9,8 @@ import logging
 class Gandhinagar(State):
 
     def __init__(self, test_prefix=None):
-        super().__init__()
         self.state_name = "Gandhinagar"
-        self.stein_url = "https://stein.hamaar.cloud/v1/storages/608d544533382c3501cf8c96"
+        super().__init__()
         self.source_url = "https://vmc.gov.in/HospitalModuleGMC/HospitalBedsDetails.aspx?tid=1"
         self.main_sheet_name = "Gandhinagar"
         if test_prefix:

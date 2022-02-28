@@ -8,13 +8,12 @@ import pandas as pd
 class TamilNadu(State):
 
 	def __init__(self, test_prefix=None):
+		self.state_name = "Tamil Nadu"
 		super().__init__()
-		self.stein_url = "https://stein.hamaar.cloud/v1/storages/6089820e03eef3b588d05a6d"
 		self.source_url = "https://stopcorona.tn.gov.in/beds.php"
 		self.main_sheet_name = "Tamil Nadu"
 		if test_prefix:
 			self.main_sheet_name = test_prefix + self.main_sheet_name
-		self.state_name = "Tamil Nadu"
 		self.sheet_url = self.stein_url + "/" + self.main_sheet_name
 		# Fetching it here because need number of records in the Class
 		# need number of records because bulk delete API throws error entity too large

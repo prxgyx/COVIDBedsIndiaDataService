@@ -11,9 +11,8 @@ from states.State import State
 class Nashik(State):
 
     def __init__(self, test_prefix=None):
-        super().__init__()
         self.state_name = "Nashik"
-        self.stein_url = "https://stein.hamaar.cloud/v1/storages/608efad8423e2153ac2fd383"
+        super().__init__()
         self.source_url = "http://covidcbrs.nmc.gov.in/home/searchHosptial"
         self.main_sheet_name = "Nashik"
         if test_prefix:

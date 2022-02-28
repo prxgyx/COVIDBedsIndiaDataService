@@ -19,10 +19,9 @@ covidbedsbot = TelegramBot()
 class UttarPradesh(State):
 
 	def __init__(self, test_prefix=None):
-		super().__init__()
-		self.stein_url = "https://stein.hamaar.cloud/v1/storages/609fc7dde75f9ccdd696eb35"
-		self.source_url = "https://beds.dgmhup-covid19.in/EN/covid19bedtrack"
 		self.main_sheet_name = "Uttar Pradesh"
+		super().__init__()
+		self.source_url = "https://beds.dgmhup-covid19.in/EN/covid19bedtrack"
 		if test_prefix:
 			self.main_sheet_name = test_prefix + self.main_sheet_name
 		self.state_name = "Uttar Pradesh"

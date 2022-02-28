@@ -19,9 +19,8 @@ regex = '^[0-9]+$'
 class Bengaluru(State):
 
     def __init__(self, test_prefix=None):
-        super().__init__()
         self.state_name = "Bengaluru"
-        self.stein_url = "https://stein.hamaar.cloud/v1/storages/608982f703eef3de2bd05a72"
+        super().__init__()
         self.source_url = "https://apps.bbmpgov.in/Covid19/en/bedstatus.php"
         self.main_sheet_name = "Bengaluru"
         if test_prefix:

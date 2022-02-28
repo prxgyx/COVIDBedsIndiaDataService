@@ -16,13 +16,12 @@ covidbedsbot = TelegramBot()
 class Bihar(FreshState):
 
 	def __init__(self, test_prefix=None):
+		self.state_name = "Bihar"
 		super().__init__()
-		self.stein_url = "https://stein.hamaar.cloud/v1/storages/60a62cf2e75f9c105696eb38"
 		self.source_url = "https://covid19health.bihar.gov.in/DailyDashboard/BedsOccupied"
 		self.main_sheet_name = "Bihar"
 		if test_prefix:
 			self.main_sheet_name = test_prefix + self.main_sheet_name
-		self.state_name = "Bihar"
 		self.sheet_url = self.stein_url + "/" + self.main_sheet_name
 		# Fetching it here because need number of records in the Class
 		# need number of records because bulk delete API throws error entity too large

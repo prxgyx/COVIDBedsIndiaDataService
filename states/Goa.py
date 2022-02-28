@@ -12,10 +12,9 @@ from states.State import State
 
 class Goa(State):
     def __init__(self, test_prefix=None):
-        super().__init__()
-        self.stein_url = "https://stein.hamaar.cloud/v1/storages/60a36cb4e75f9c5d8c96eb36"
-        self.source_url = "https://goaonline.gov.in/beds"
         self.state_name = "Goa"
+        super().__init__()
+        self.source_url = "https://goaonline.gov.in/beds"
         self.main_sheet_name = "Goa"
         if test_prefix:
             self.main_sheet_name = test_prefix + self.main_sheet_name

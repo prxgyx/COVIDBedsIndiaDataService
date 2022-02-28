@@ -7,10 +7,9 @@ from states.State import State
 
 class Surat(State):
     def __init__(self, test_prefix=None):
-        super().__init__()
-        self.stein_url = "https://stein.hamaar.cloud/v1/storages/6094e879423e213eb82fd384"
-        self.source_url = "http://office.suratsmartcity.com/SuratCOVID19/Home/COVID19BedAvailabilityDetails"
         self.state_name = "Surat"
+        super().__init__()
+        self.source_url = "http://office.suratsmartcity.com/SuratCOVID19/Home/COVID19BedAvailabilityDetails"
         self.main_sheet_name = "Surat"
         if test_prefix:
             self.main_sheet_name = test_prefix + self.main_sheet_name

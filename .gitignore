@@ -7,3 +7,4 @@ DataService.log
 tmp_*
 *.exe
 /.idea
+.DS_Store
